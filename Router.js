@@ -9,10 +9,14 @@ class Router {
 
   static makePaylosd(type, { key, collection, value }) {
     switch (type) {
-      case 'added': return { [key]: value };
-      case 'deleted': return { [key]: collection[key] };
-      case 'unchanged': return { [key]: collection[key] };
-      case 'modified': return { [key]: collection[key], changed: value };
+      case 'added':
+        return { [key]: value };
+      case 'deleted':
+        return { [key]: collection[key] };
+      case 'unchanged':
+        return { [key]: collection[key] };
+      case 'modified':
+        return { [key]: collection[key], changed: value };
       default:
         throw new Error('unknown happens');
     }

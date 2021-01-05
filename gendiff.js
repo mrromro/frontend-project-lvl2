@@ -16,7 +16,7 @@ function filesToJSON(...files) {
 function compareObjects(...objects) {
   const keys = getUniqKeys(objects);
   const [first, ...rest] = objects;
-  const result = keys.map((key) => {
+  return keys.map((key) => {
     const testee = {
       key,
       collection: first,
@@ -24,7 +24,6 @@ function compareObjects(...objects) {
     };
     return router.process(testee);
   });
-  return result;
 }
 
 program.action((filepath1, filepath2) => {
