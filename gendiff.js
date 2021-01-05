@@ -23,11 +23,7 @@ function compareObjects(...objects) {
     if (first[key] === value) return [...res, `  ${key}: ${value}`];
     return [...res, `- ${key}: ${first[key]}`, `+ ${key}: ${value}`];
   }, []);
-  return [
-    '{\n',
-    result.join(`\n${indent}`),
-    '\n}',
-  ].join(indent);
+  return ['{\n', result.join(`\n${indent}`), '\n}'].join(indent);
 }
 
 program.action((filepath1, filepath2) => {
