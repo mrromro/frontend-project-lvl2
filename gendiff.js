@@ -13,6 +13,7 @@ function filesToJSON(...files) {
 }
 
 function compareObjects(...objects) {
+  const indent = '  ';
   const keys = getUniqKeys(objects);
   const [first, ...rest] = objects;
   const result = keys.reduce((res, key) => {
@@ -22,7 +23,11 @@ function compareObjects(...objects) {
     if (first[key] === value) return [...res, `  ${key}: ${value}`];
     return [...res, `- ${key}: ${first[key]}`, `+ ${key}: ${value}`];
   }, []);
-  return result.join('\n');
+  return [
+    '{\n',
+    result.join(`\n${indent}`),
+    '\n}',
+  ].join(indent);
 }
 
 program.action((filepath1, filepath2) => {
