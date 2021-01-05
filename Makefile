@@ -1,10 +1,13 @@
-.PHONY: install lint pretty test publish
+.PHONY: install lint fix pretty test publish
 
 install:
 	npm install
 
 lint:
 	npx eslint . --ignore-path .gitignore
+
+fix:
+	npx eslint . --ignore-path .gitignore --fix
 
 pretty:
 	npx prettier . -w
