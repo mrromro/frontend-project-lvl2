@@ -1,4 +1,4 @@
-.PHONY: install lint fix pretty test publish
+.PHONY: install lint fix pretty test publish push
 
 install:
 	npm install
@@ -17,3 +17,6 @@ test:
 
 publish:
 	npm publish --dry-run
+
+push:
+	git push origin --all
