@@ -10,5 +10,10 @@ program
     '0.1.0',
     '-V, --version',
     'output the current version',
-  )
-  .parse(process.argv);
+  );
+
+program
+  .arguments('<filepath1> <filepath2>')
+  .option('-f, --format [type]', 'output format');
+
+program.parse(process.argv);
