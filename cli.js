@@ -8,4 +8,9 @@ program
   .arguments('<filepath1> <filepath2>')
   .option('-f, --format [type]', 'output format');
 
+export function output(data) {
+  // eslint-disable-next-line no-console
+  console.log(data);
+}
+
 export default program;

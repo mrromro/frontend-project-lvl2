@@ -1,7 +1,5 @@
 function getUniqKeys(objects, sort = true) {
-  const keys = [
-    ...new Set(...objects.map((obj) => Object.keys(obj))),
-  ];
+  const keys = [...new Set(...objects.map((obj) => Object.keys(obj)))];
   return sort ? keys.sort() : keys;
 }
 
@@ -11,7 +9,4 @@ function findLastValue(key, collection) {
   return key in obj ? obj[key] : undefined;
 }
 
-export {
-  getUniqKeys,
-  findLastValue,
-};
+export { getUniqKeys, findLastValue };
