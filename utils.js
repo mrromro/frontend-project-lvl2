@@ -6,7 +6,7 @@ function getUniqKeys(objects, sort = true) {
 function findLastValue(key, collection) {
   const coll = collection.slice().reverse();
   const obj = coll.find((item) => key in item);
-  return key in obj ? obj[key] : undefined;
+  return obj ? obj[key] : undefined;
 }
 
 export { getUniqKeys, findLastValue };
