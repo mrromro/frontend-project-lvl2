@@ -1,0 +1,15 @@
+{
+  "random": 38,
+  "random float": 33.333,
+  "date": "1982-03-24",
+  "regEx": "Hello to you",
+  "enum": "generator",
+  "firstname": "Edith",
+  "address": "Evergreen Valley",
+  "lastname": "Colleen",
+  "city": "Nukulaelae",
+  "country": "Cuba",
+  "countryCode": "CB",
+  "email uses current data": "Edith.Colleen@gmail.com",
+  "email from expression": "Edith.Colleen@yopmail.com"
+}
