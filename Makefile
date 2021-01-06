@@ -15,6 +15,9 @@ pretty:
 test:
 	npm test
 
+test-watch:
+	npm test -- --watch
+
 test-coverage:
 	npm test -- --coverage
 
