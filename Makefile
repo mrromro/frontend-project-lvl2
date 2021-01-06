@@ -13,7 +13,7 @@ pretty:
 	npx prettier . -w
 
 test:
-	npx jest test
+	npm run jest
 
 publish:
 	npm publish --dry-run
