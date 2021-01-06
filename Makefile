@@ -13,7 +13,10 @@ pretty:
 	npx prettier . -w
 
 test:
-	npm run test
+	npm test
+
+test-coverage:
+	npm test -- --coverage
 
 publish:
 	npm publish --dry-run
