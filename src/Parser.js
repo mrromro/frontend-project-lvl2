@@ -1,4 +1,4 @@
-class Router {
+class Parser {
   constructor(router) {
     this.router = router;
   }
@@ -52,4 +52,4 @@ const router = {
   modified: isModified,
 };
 
-export default new Router(router);
+export default new Parser(router);

@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import { join as pathjoin } from 'path';
-import utils from '../utils.js';
+import utils from '../src/utils.js';
 
 let objects;
 const loader = async (filename) => {

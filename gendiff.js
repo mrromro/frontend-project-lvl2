@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import program, { output } from './cli.js';
-import utils from './utils.js';
-import router from './Router.js';
+import program, { output } from './src/cli.js';
+import utils from './src/utils.js';
+import parser from './src/Parser.js';
 
 function compareObjects(...objects) {
   const keys = utils.getUniqKeys(objects);
@@ -13,7 +13,7 @@ function compareObjects(...objects) {
       collection: first,
       value: utils.findLastValue(key, rest),
     };
-    return router.process(testee);
+    return parser.process(testee);
   });
 }
 

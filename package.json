@@ -5,7 +5,7 @@
   "description": "[![Actions Status](https://github.com/mrromro/frontend-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/mrromro/frontend-project-lvl2/actions)",
   "main": "gendiff.js",
   "scripts": {
-    "test": "jest test"
+    "test": "jest __tests__"
   },
   "repository": {
     "type": "git",
