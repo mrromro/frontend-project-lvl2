@@ -7,7 +7,7 @@ class Parser {
     return Object.keys(this.router).find((type) => this.router[type](testee));
   }
 
-  static makePaylosd(type, { key, collection, value }) {
+  static makePayload(type, { key, collection, value }) {
     switch (type) {
       case 'added':
         return { [key]: value };
@@ -24,7 +24,7 @@ class Parser {
 
   process(testee) {
     const type = this.testKey(testee);
-    const payload = this.constructor.makePaylosd(type, testee);
+    const payload = this.constructor.makePayload(type, testee);
     return { type, payload };
   }
 }
