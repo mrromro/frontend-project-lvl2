@@ -42,7 +42,7 @@ function isUnchanged({ key, collection, value }) {
 }
 
 function isModified({ key, collection, value }) {
-  return key in collection && value !== collection[key];
+  return key in collection && value !== collection[key] && value !== undefined;
 }
 
 const router = {
