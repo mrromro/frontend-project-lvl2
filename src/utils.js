@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import { readFileSync } from 'fs';
 
 function getUniqKeys(objects, sort = true) {
-  const keys = [...new Set(...objects.map((obj) => Object.keys(obj)))];
+  const keys = [...new Set(objects.map(Object.keys).flat())];
   return sort ? keys.sort() : keys;
 }
 
