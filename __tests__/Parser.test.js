@@ -8,6 +8,10 @@ describe('Router functions test suit', () => {
       value: 'value',
       collection: {},
     };
+
+    const type = 'added';
+    let payload;
+
     test('predicates test', () => {
       const added = parser.router.added(testee);
       const deleted = parser.router.deleted(testee);
@@ -20,12 +24,16 @@ describe('Router functions test suit', () => {
     });
     test('router test', () => {
       const routed = parser.testKey(testee);
-      expect(routed).toBe('added');
+      expect(routed).toBe(type);
     });
     test('makePayload test', () => {
-      const payload = parser.constructor.makePayload('added', testee);
+      payload = parser.constructor.makePayload(type, testee);
       const { key, value } = testee;
       expect(payload).toStrictEqual({ [key]: value });
+    });
+    test('process test', () => {
+      const received = parser.process(testee);
+      expect(received).toStrictEqual({ type, payload });
     });
   });
 
@@ -35,6 +43,10 @@ describe('Router functions test suit', () => {
       value: undefined,
       collection: { key: 'value' },
     };
+
+    const type = 'deleted';
+    let payload;
+
     test('predicates test', () => {
       const added = parser.router.added(testee);
       const deleted = parser.router.deleted(testee);
@@ -47,12 +59,16 @@ describe('Router functions test suit', () => {
     });
     test('router test', () => {
       const routed = parser.testKey(testee);
-      expect(routed).toBe('deleted');
+      expect(routed).toBe(type);
     });
     test('makePayload test', () => {
-      const payload = parser.constructor.makePayload('deleted', testee);
+      payload = parser.constructor.makePayload(type, testee);
       const { key, collection } = testee;
       expect(payload).toStrictEqual({ [key]: collection[key] });
+    });
+    test('process test', () => {
+      const received = parser.process(testee);
+      expect(received).toStrictEqual({ type, payload });
     });
   });
 
@@ -62,6 +78,10 @@ describe('Router functions test suit', () => {
       value: 'value 2',
       collection: { key: 'value' },
     };
+
+    const type = 'modified';
+    let payload;
+
     test('predicates test', () => {
       const added = parser.router.added(testee);
       const deleted = parser.router.deleted(testee);
@@ -74,12 +94,16 @@ describe('Router functions test suit', () => {
     });
     test('router test', () => {
       const routed = parser.testKey(testee);
-      expect(routed).toBe('modified');
+      expect(routed).toBe(type);
     });
     test('makePayload test', () => {
-      const payload = parser.constructor.makePayload('modified', testee);
+      payload = parser.constructor.makePayload(type, testee);
       const { key, collection, value } = testee;
       expect(payload).toStrictEqual({ [key]: collection[key], changed: value });
+    });
+    test('process test', () => {
+      const received = parser.process(testee);
+      expect(received).toStrictEqual({ type, payload });
     });
   });
 
@@ -89,6 +113,10 @@ describe('Router functions test suit', () => {
       value: 'value',
       collection: { key: 'value' },
     };
+
+    const type = 'unchanged';
+    let payload;
+
     test('isUnchanged test', () => {
       const added = parser.router.added(testee);
       const deleted = parser.router.deleted(testee);
@@ -101,13 +129,17 @@ describe('Router functions test suit', () => {
     });
     test('router test', () => {
       const routed = parser.testKey(testee);
-      expect(routed).toBe('unchanged');
+      expect(routed).toBe(type);
     });
     test('makePayload test', () => {
-      const payload = parser.constructor.makePayload('unchanged', testee);
+      payload = parser.constructor.makePayload(type, testee);
       const { key, collection, value } = testee;
       expect(payload).toStrictEqual({ [key]: value });
       expect(payload).toStrictEqual({ [key]: collection[key] });
+    });
+    test('process test', () => {
+      const received = parser.process(testee);
+      expect(received).toStrictEqual({ type, payload });
     });
   });
 });
