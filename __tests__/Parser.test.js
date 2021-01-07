@@ -88,7 +88,10 @@ describe('Router functions test suit', () => {
     test('makePayload test', () => {
       results[type] = parser.constructor.makePayload(type, testee);
       const { key, collection, value } = testee;
-      expect(results[type]).toStrictEqual({ [key]: collection[key], changed: value });
+      expect(results[type]).toStrictEqual({
+        [key]: collection[key],
+        changed: value,
+      });
     });
   });
 
