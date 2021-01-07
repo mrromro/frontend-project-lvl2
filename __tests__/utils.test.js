@@ -1,3 +1,4 @@
+import { describe, test } from '@jest/globals';
 import { promises as fs } from 'fs';
 import { join as pathjoin } from 'path';
 import utils from '../src/utils.js';
