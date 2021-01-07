@@ -22,6 +22,11 @@ describe('Router functions test suit', () => {
       const routed = parser.testKey(testee);
       expect(routed).toBe('added');
     });
+    test('makePayload test', () => {
+      const payload = parser.constructor.makePayload('added', testee);
+      const { key, value } = testee;
+      expect(payload).toStrictEqual({ [key]: value });
+    });
   });
 
   describe('deleted test', () => {
@@ -43,6 +48,11 @@ describe('Router functions test suit', () => {
     test('router test', () => {
       const routed = parser.testKey(testee);
       expect(routed).toBe('deleted');
+    });
+    test('makePayload test', () => {
+      const payload = parser.constructor.makePayload('deleted', testee);
+      const { key, collection } = testee;
+      expect(payload).toStrictEqual({ [key]: collection[key] });
     });
   });
 
@@ -66,6 +76,11 @@ describe('Router functions test suit', () => {
       const routed = parser.testKey(testee);
       expect(routed).toBe('modified');
     });
+    test('makePayload test', () => {
+      const payload = parser.constructor.makePayload('modified', testee);
+      const { key, collection, value } = testee;
+      expect(payload).toStrictEqual({ [key]: collection[key], changed: value });
+    });
   });
 
   describe('unchanged test', () => {
@@ -87,6 +102,12 @@ describe('Router functions test suit', () => {
     test('router test', () => {
       const routed = parser.testKey(testee);
       expect(routed).toBe('unchanged');
+    });
+    test('makePayload test', () => {
+      const payload = parser.constructor.makePayload('unchanged', testee);
+      const { key, collection, value } = testee;
+      expect(payload).toStrictEqual({ [key]: value });
+      expect(payload).toStrictEqual({ [key]: collection[key] });
     });
   });
 });
