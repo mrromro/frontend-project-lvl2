@@ -63,9 +63,7 @@ describe('Test utility getUniqKeys', () => {
 
   test('many big objects', () => {
     const objs = objects.map(({ data }) => data);
-    const keys = objs
-      .map((obj) => Object.keys(obj))
-      .reduce((acc, item) => [...acc, ...item], []);
+    const keys = objs.map((obj) => Object.keys(obj)).flat();
     const expected = [...new Set(keys)].sort();
     const received = utils.getUniqKeys(objs);
     expect(received).toStrictEqual(expected);
