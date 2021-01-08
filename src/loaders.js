@@ -5,9 +5,12 @@ import { readFileSync } from 'fs';
 function chooseLoader(filename) {
   const extension = path.extname(filename).toLowerCase();
   switch (extension) {
-    case '.json': return JSON.parse;
-    case '.yaml': return yaml.load;
-    default: throw new Error(`unknown file extension ${extension}`);
+    case '.json':
+      return JSON.parse;
+    case '.yaml':
+      return yaml.load;
+    default:
+      throw new Error(`unknown file extension ${extension}`);
   }
 }
 
@@ -21,4 +24,4 @@ function filesToObjects(...files) {
   return files.map(fileToObject);
 }
 
-export default { filesToObjects };
+export default { chooseLoader, fileToObject, filesToObjects };
