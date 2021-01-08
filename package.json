@@ -30,6 +30,7 @@
     "prettier": "^2.2.1"
   },
   "dependencies": {
-    "commander": "^6.2.1"
+    "commander": "^6.2.1",
+    "js-yaml": "^4.0.0"
   }
 }
