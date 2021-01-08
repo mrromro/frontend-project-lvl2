@@ -1,34 +1,7 @@
-import { describe, test } from '@jest/globals';
-import { promises as fs } from 'fs';
-import { join as pathjoin } from 'path';
+import '@jest/globals';
 import utils from '../src/utils.js';
-
-let objects;
-const loader = async (filename) => {
-  const file = await fs.readFile(filename, 'utf-8');
-  return JSON.parse(file);
-};
-
-const parseFiles = (dirAddr) => async (files) => {
-  const promises = files.map(async (filename) => {
-    const [name, extension] = filename.split('.');
-    const path = pathjoin(dirAddr, filename);
-    const data = await loader(path);
-    return {
-      name,
-      extension,
-      path,
-      data,
-    };
-  });
-  return Promise.all(promises);
-};
-
-beforeAll(async () => {
-  const dirAddr = pathjoin(__dirname, '__fixtures__');
-  const files = await fs.readdir(dirAddr);
-  objects = await parseFiles(dirAddr)(files);
-});
+import testJson1 from './__fixtures__/flat1.json';
+import testJson2 from './__fixtures__/flat2.json';
 
 describe('Test utility getUniqKeys', () => {
   test('empty object', () => {
@@ -56,14 +29,14 @@ describe('Test utility getUniqKeys', () => {
   });
 
   test('big object', () => {
-    const { data } = objects[0];
+    const data = testJson1;
     const expected = Object.keys(data).sort();
     const received = utils.getUniqKeys([data]);
     expect(received).toStrictEqual(expected);
   });
 
-  test('many big objects', () => {
-    const objs = objects.map(({ data }) => data);
+  test('two big objects', () => {
+    const objs = [testJson1, testJson2];
     const keys = objs.map((obj) => Object.keys(obj)).flat();
     const expected = [...new Set(keys)].sort();
     const received = utils.getUniqKeys(objs);
@@ -125,18 +98,6 @@ describe('Test utility findLastValue', () => {
     const collection = [{ key: 'value' }, { key: 'value 2' }];
     const expected = 'value 2';
     const received = utils.findLastValue(key, collection);
-    expect(received).toStrictEqual(expected);
-  });
-});
-
-describe('Test file parsers', () => {
-  test('JSONfilesToObjects test with all json files', async () => {
-    const files = objects.filter(
-      ({ extension }) => extension.toLowerCase() === 'json',
-    );
-    const paths = files.map(({ path }) => path);
-    const expected = files.map(({ data }) => data);
-    const received = utils.JSONfilesToObjects(...paths);
     expect(received).toStrictEqual(expected);
   });
 });
