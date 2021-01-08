@@ -1,21 +1,17 @@
 import '@jest/globals';
 import { promises as fs } from 'fs';
 import path from 'path';
+import yaml from 'js-yaml';
 import loaders from '../src/loaders.js';
 
 let objects;
-
-const loader = async (filename) => {
-  const file = await fs.readFile(filename, 'utf-8');
-  return JSON.parse(file);
-};
 
 const parseFiles = (dirAddr) => async (files) => {
   const promises = files.map(async (filename) => {
     const name = path.basename(filename);
     const extension = path.extname(filename);
     const addr = path.join(dirAddr, filename);
-    const data = await loader(addr);
+    const data = await fs.readFile(addr, 'utf-8');
     return {
       name,
       extension,
@@ -26,6 +22,17 @@ const parseFiles = (dirAddr) => async (files) => {
   return Promise.all(promises);
 };
 
+const testFiles = (storage, extname, parser) => {
+  const files = storage.filter(
+    ({ extension }) => extension.toLowerCase() === extname,
+  );
+  const paths = files.map(({ addr }) => addr);
+  return {
+    paths,
+    expected: files.map(({ data }) => parser(data)),
+  };
+};
+
 beforeAll(async () => {
   const dirAddr = path.join(__dirname, '__fixtures__');
   const files = await fs.readdir(dirAddr);
@@ -33,13 +40,14 @@ beforeAll(async () => {
 });
 
 describe('Test file parsers', () => {
-  test('JSONfilesToObjects test with all json files', async () => {
-    const files = objects.filter(
-      ({ extension }) => extension.toLowerCase() === 'json',
-    );
-    const paths = files.map(({ addr }) => addr);
-    const expected = files.map(({ data }) => data);
-    const received = loaders.JSONfilesToObjects(...paths);
+  test('JSON filesToObjects test with all json files', async () => {
+    const { paths, expected } = testFiles(objects, '.json', JSON.parse);
+    const received = loaders.filesToObjects(...paths);
+    expect(received).toStrictEqual(expected);
+  });
+  test('YAML filesToObjects test with all yaml files', async () => {
+    const { paths, expected } = testFiles(objects, '.yaml', yaml.load);
+    const received = loaders.filesToObjects(...paths);
     expect(received).toStrictEqual(expected);
   });
 });
