@@ -14,6 +14,13 @@ function compareObjects(...objects) {
       collection: first,
       value: utils.findLastValue(key, rest),
     };
+    if (typeof first[key] === 'object') {
+      return {
+        [key]: compareObjects(
+          ...objects.map((obj) => obj[key]).filter(Boolean),
+        ),
+      };
+    }
     return parser.process(testee);
   });
 }
