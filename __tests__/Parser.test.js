@@ -50,7 +50,7 @@ describe('Router functions test suit', () => {
     test('makePayload test', () => {
       results[type] = parser.constructor.makePayload(type, testee);
       const { key, value } = testee;
-      expect(results[type]).toStrictEqual({ [key]: value });
+      expect(results[type]).toStrictEqual({ key, value });
     });
   });
 
@@ -69,7 +69,7 @@ describe('Router functions test suit', () => {
     test('makePayload test', () => {
       results[type] = parser.constructor.makePayload(type, testee);
       const { key, collection } = testee;
-      expect(results[type]).toStrictEqual({ [key]: collection[key] });
+      expect(results[type]).toStrictEqual({ key, value: collection[key] });
     });
   });
 
@@ -89,8 +89,9 @@ describe('Router functions test suit', () => {
       results[type] = parser.constructor.makePayload(type, testee);
       const { key, collection, value } = testee;
       expect(results[type]).toStrictEqual({
-        [key]: collection[key],
-        changed: value,
+        key,
+        value: collection[key],
+        newValue: value,
       });
     });
   });
@@ -110,8 +111,8 @@ describe('Router functions test suit', () => {
     test('makePayload test', () => {
       results[type] = parser.constructor.makePayload(type, testee);
       const { key, collection, value } = testee;
-      expect(results[type]).toStrictEqual({ [key]: value });
-      expect(results[type]).toStrictEqual({ [key]: collection[key] });
+      expect(results[type]).toStrictEqual({ key, value });
+      expect(results[type]).toStrictEqual({ key, value: collection[key] });
     });
   });
 

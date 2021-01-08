@@ -23,6 +23,9 @@
       "code": "CA"
     }
   },
+  "to delete": {
+    "key": "value"
+  },
   "email uses current data": "Edith.Colleen@gmail.com",
   "email from expression": "Edith.Colleen@yopmail.com"
 }
