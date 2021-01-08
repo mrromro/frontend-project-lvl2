@@ -1,6 +1,6 @@
 import { describe, test } from '@jest/globals';
 import { promises as fs } from 'fs';
-import { join as pathjoin } from 'path';
+import path from 'path';
 import loaders from '../src/loaders.js';
 
 let objects;
@@ -12,13 +12,14 @@ const loader = async (filename) => {
 
 const parseFiles = (dirAddr) => async (files) => {
   const promises = files.map(async (filename) => {
-    const [name, extension] = filename.split('.');
-    const path = pathjoin(dirAddr, filename);
-    const data = await loader(path);
+    const name = path.basename(filename);
+    const extension = path.extname(filename);
+    const addr = path.join(dirAddr, filename);
+    const data = await loader(addr);
     return {
       name,
       extension,
-      path,
+      addr,
       data,
     };
   });
@@ -26,7 +27,7 @@ const parseFiles = (dirAddr) => async (files) => {
 };
 
 beforeAll(async () => {
-  const dirAddr = pathjoin(__dirname, '__fixtures__');
+  const dirAddr = path.join(__dirname, '__fixtures__');
   const files = await fs.readdir(dirAddr);
   objects = await parseFiles(dirAddr)(files);
 });
@@ -36,7 +37,7 @@ describe('Test file parsers', () => {
     const files = objects.filter(
       ({ extension }) => extension.toLowerCase() === 'json',
     );
-    const paths = files.map(({ path }) => path);
+    const paths = files.map(({ addr }) => addr);
     const expected = files.map(({ data }) => data);
     const received = loaders.JSONfilesToObjects(...paths);
     expect(received).toStrictEqual(expected);
