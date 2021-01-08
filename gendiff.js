@@ -5,40 +5,42 @@ import parser from './src/parsers.js';
 import render from './src/render.js';
 import testType from './src/router.js';
 
+const router = (objects, callback) => (type) => ({
+  added: ({ key, value }) => ({ type, payload: { key, value } }),
+  deleted: ({ key, collection }) => ({
+    type,
+    payload: { key, value: collection[key] },
+  }),
+  unchanged: ({ key, collection }) => ({
+    type,
+    payload: { key, value: collection[key] },
+  }),
+  modified: ({ key, value, collection }) => {
+    if (typeof collection[key] === 'object') {
+      return {
+        type: 'unchanged',
+        payload: {
+          key,
+          value: callback(...objects.map((obj) => obj[key]).filter(Boolean)),
+        },
+      };
+    }
+    return {
+      type,
+      payload: { key, value: collection[key], newValue: value },
+    };
+  },
+})[type];
+
 function compareObjects(...objects) {
   const keys = utils.getUniqKeys(objects);
   const [first, ...rest] = objects;
+  const makeRecord = router(objects, compareObjects);
   return keys.map((key) => {
     const collection = first;
     const value = utils.findLastValue(key, rest);
     const type = testType({ key, value, collection });
-    switch (type) {
-      case 'added':
-        return { type, payload: { key, value } };
-      case 'deleted':
-        return { type, payload: { key, value: collection[key] } };
-      case 'unchanged':
-        return { type, payload: { key, value: collection[key] } };
-      case 'modified': {
-        if (typeof collection[key] === 'object') {
-          return {
-            type: 'unchanged',
-            payload: {
-              key,
-              value: compareObjects(
-                ...objects.map((obj) => obj[key]).filter(Boolean),
-              ),
-            },
-          };
-        }
-        return {
-          type,
-          payload: { key, value: collection[key], newValue: value },
-        };
-      }
-      default:
-        throw new Error('unknown happens');
-    }
+    return makeRecord(type)({ key, value, collection });
   });
 }
 
