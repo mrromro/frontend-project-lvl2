@@ -1,27 +1,23 @@
 function render(record) {
   const { type, payload } = record;
+  if (payload === undefined) {
+    return record.reduce((acc, rec) => ({ ...acc, ...render(rec) }), {});
+  }
+  const { key, value, newValue } = payload;
   switch (type) {
-    case 'added': {
-      const { key, value } = payload;
+    case 'added':
       return { [`+ ${key}`]: value };
-    }
-    case 'deleted': {
-      const { key, value } = payload;
+    case 'deleted':
       return { [`- ${key}`]: value };
-    }
-    case 'modified': {
-      const { key, value, newValue } = payload;
+    case 'modified':
       return {
         [`- ${key}`]: value,
         [`+ ${key}`]: newValue,
       };
-    }
-    case 'unchanged': {
-      const { key, value } = payload;
+    case 'unchanged':
       return { [`  ${key}`]: value };
-    }
     default: {
-      return record.reduce((acc, rec) => ({ ...acc, ...render(rec) }), {});
+      throw new Error(`unexpected type: ${type}`);
     }
   }
 }
