@@ -19,8 +19,7 @@ function compareObjects(...objects) {
 }
 
 program.action((filepath1, filepath2) => {
-  const load = loader.JSONfilesToObjects;
-  const [file1, file2] = load(filepath1, filepath2);
+  const [file1, file2] = loader.filesToObjects(filepath1, filepath2);
   output(compareObjects(file1, file2));
 });
 
