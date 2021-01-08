@@ -1,4 +1,4 @@
-import { describe, test } from '@jest/globals';
+import '@jest/globals';
 import { promises as fs } from 'fs';
 import path from 'path';
 import loaders from '../src/loaders.js';
