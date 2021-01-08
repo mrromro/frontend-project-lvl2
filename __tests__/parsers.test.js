@@ -23,17 +23,6 @@ const parseFiles = (dirAddr) => async (files) => {
   return Promise.all(promises);
 };
 
-const testFiles = (storage, extname, parser) => {
-  const files = storage.filter(
-    ({ extension }) => extension.toLowerCase() === extname,
-  );
-  const paths = files.map(({ addr }) => addr);
-  return {
-    paths,
-    expected: files.map(({ data }) => parser(data)),
-  };
-};
-
 beforeAll(async () => {
   const dirAddr = path.join(__dirname, '__fixtures__');
   const files = await fs.readdir(dirAddr);
@@ -67,15 +56,12 @@ describe('Test file parsers by one file', () => {
   });
 });
 
-describe('Test file parsers', () => {
-  test('JSON filesToObjects test with all json files', async () => {
-    const { paths, expected } = testFiles(objects, '.json', JSON.parse);
-    const received = parsers.filesToObjects(...paths);
-    expect(received).toStrictEqual(expected);
+test('filesToObjects test with all json files', async () => {
+  const paths = objects.map(({ addr }) => addr);
+  const expected = objects.map(({ data, addr }) => {
+    const loader = parsers.chooseLoader(addr);
+    return loader(data);
   });
-  test('YAML filesToObjects test with all yaml files', async () => {
-    const { paths, expected } = testFiles(objects, '.yaml', yaml.load);
-    const received = parsers.filesToObjects(...paths);
-    expect(received).toStrictEqual(expected);
-  });
+  const received = parsers.filesToObjects(...paths);
+  expect(received).toStrictEqual(expected);
 });

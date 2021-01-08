@@ -5,32 +5,38 @@ import parser from './src/parsers.js';
 import render from './src/render.js';
 import testType from './src/router.js';
 
-const router = (objects, callback) => (type) => ({
-  added: ({ key, value }) => ({ type, payload: { key, value } }),
-  deleted: ({ key, collection }) => ({
-    type,
-    payload: { key, value: collection[key] },
-  }),
-  unchanged: ({ key, collection }) => ({
-    type,
-    payload: { key, value: collection[key] },
-  }),
-  modified: ({ key, value, collection }) => {
-    if (typeof collection[key] === 'object') {
-      return {
-        type: 'unchanged',
-        payload: {
-          key,
-          value: callback(...objects.map((obj) => obj[key]).filter(Boolean)),
-        },
-      };
-    }
+function router(objects, callback) {
+  return function makeRecord(type) {
     return {
-      type,
-      payload: { key, value: collection[key], newValue: value },
-    };
-  },
-})[type];
+      added: ({ key, value }) => ({ type, payload: { key, value } }),
+      deleted: ({ key, collection }) => ({
+        type,
+        payload: { key, value: collection[key] },
+      }),
+      unchanged: ({ key, collection }) => ({
+        type,
+        payload: { key, value: collection[key] },
+      }),
+      modified: ({ key, value, collection }) => {
+        if (typeof collection[key] === 'object') {
+          return {
+            type: 'unchanged',
+            payload: {
+              key,
+              value: callback(
+                ...objects.map((obj) => obj[key]).filter(Boolean),
+              ),
+            },
+          };
+        }
+        return {
+          type,
+          payload: { key, value: collection[key], newValue: value },
+        };
+      },
+    }[type];
+  };
+}
 
 function compareObjects(...objects) {
   const keys = utils.getUniqKeys(objects);

@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals';
+import { expect, test } from '@jest/globals';
 import testType from '../src/router.js';
 
 const testeesBook = {
@@ -24,44 +24,10 @@ const testeesBook = {
   },
 };
 
-describe('Router functions test suit', () => {
-  describe('added test', () => {
-    const type = 'added';
-    const { [type]: testee } = testeesBook;
-
-    test('router test', () => {
-      const routed = testType(testee);
-      expect(routed).toBe(type);
-    });
-  });
-
-  describe('deleted test', () => {
-    const type = 'deleted';
-    const { [type]: testee } = testeesBook;
-
-    test('router test', () => {
-      const routed = testType(testee);
-      expect(routed).toBe(type);
-    });
-  });
-
-  describe('modified test', () => {
-    const type = 'modified';
-    const { [type]: testee } = testeesBook;
-
-    test('router test', () => {
-      const routed = testType(testee);
-      expect(routed).toBe(type);
-    });
-  });
-
-  describe('unchanged test', () => {
-    const type = 'unchanged';
-    const { [type]: testee } = testeesBook;
-
-    test('router test', () => {
-      const routed = testType(testee);
-      expect(routed).toBe(type);
-    });
+test('all cases at once', () => {
+  Object.entries(testeesBook).forEach(([key, value]) => {
+    const expected = key;
+    const received = testType(value);
+    expect(received).toBe(expected);
   });
 });
