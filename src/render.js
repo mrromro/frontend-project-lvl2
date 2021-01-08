@@ -1,13 +1,4 @@
-/* eslint-disable no-use-before-define */
-function mapToObj(records) {
-  const result = records.reduce(
-    (acc, record) => ({ ...acc, ...reducer(record) }),
-    {},
-  );
-  return result;
-}
-
-function reducer(record) {
+function render(record) {
   const { type, payload } = record;
   switch (type) {
     case 'added': {
@@ -30,10 +21,9 @@ function reducer(record) {
       return { [`  ${key}`]: value };
     }
     default: {
-      const { key, value } = record;
-      return { [key]: mapToObj(value) };
+      return record.reduce((acc, rec) => ({ ...acc, ...render(rec) }), {});
     }
   }
 }
 
-export default { mapToObj };
+export default render;
