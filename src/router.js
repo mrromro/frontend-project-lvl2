@@ -1,5 +1,5 @@
 function check(conditions) {
-  return conditions.every(Boolean);
+  return conditions.flat().every(Boolean);
 }
 
 function isAdded({ key, value, collection }) {
@@ -15,49 +15,43 @@ function isUnchanged({ key, value, collection }) {
 }
 
 function isModified({ key, value, collection }) {
-  return [
-    typeof collection[key] !== 'object',
-    key in collection,
-    value !== collection[key],
-    value !== undefined,
-  ];
+  return [key in collection, value !== collection[key], value !== undefined];
 }
 
-function isModifiedObject({ key, value, collection }) {
-  return [
-    typeof collection[key] === 'object',
-    key in collection,
-    value !== collection[key],
-    value !== undefined,
-  ];
+function notIsObject({ key, collection }) {
+  return [typeof collection[key] !== 'object'];
+}
+
+function isObject({ key, collection }) {
+  return [typeof collection[key] === 'object'];
 }
 
 const router = {
   added: {
     name: 'added',
-    requirements: isAdded,
+    requirements: [isAdded],
   },
   deleted: {
     name: 'deleted',
-    requirements: isDeleted,
+    requirements: [isDeleted],
   },
   unchanged: {
     name: 'unchanged',
-    requirements: isUnchanged,
+    requirements: [isUnchanged],
   },
   modified: {
     name: 'modified',
-    requirements: isModified,
+    requirements: [isModified, notIsObject],
   },
   modifiedObject: {
     name: 'modifiedObject',
-    requirements: isModifiedObject,
+    requirements: [isModified, isObject],
   },
 };
 
 function isState(testee) {
   return function test(state) {
-    return check(state.requirements(testee));
+    return check(state.requirements.map((req) => req(testee)));
   };
 }
 
