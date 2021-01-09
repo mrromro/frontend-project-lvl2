@@ -2,28 +2,19 @@ function check(conditions) {
   return conditions.every(Boolean);
 }
 
-function isAdded({ key, collection, value }) {
-  return [
-    !(key in collection),
-    value !== undefined,
-  ];
+function isAdded({ key, value, collection }) {
+  return [!(key in collection), value !== undefined];
 }
 
-function isDeleted({ key, collection, value }) {
-  return [
-    key in collection,
-    value === undefined,
-  ];
+function isDeleted({ key, value, collection }) {
+  return [key in collection, value === undefined];
 }
 
-function isUnchanged({ key, collection, value }) {
-  return [
-    key in collection,
-    value === collection[key],
-  ];
+function isUnchanged({ key, value, collection }) {
+  return [key in collection, value === collection[key]];
 }
 
-function isModified({ key, collection, value }) {
+function isModified({ key, value, collection }) {
   return [
     typeof collection[key] !== 'object',
     key in collection,
@@ -32,7 +23,7 @@ function isModified({ key, collection, value }) {
   ];
 }
 
-function isModifiedObject({ key, collection, value }) {
+function isModifiedObject({ key, value, collection }) {
   return [
     typeof collection[key] === 'object',
     key in collection,
@@ -41,24 +32,36 @@ function isModifiedObject({ key, collection, value }) {
   ];
 }
 
-// const mark = {
-//   added: '+',
-//   deleted: '-',
-//   empty: ' ',
-// };
-
-// function toString(pad, key, value) {
-//   return `${pad} ${key}: ${value}`;
-// }
-
 const router = {
-  added: isAdded,
-  deleted: isDeleted,
-  unchanged: isUnchanged,
-  modified: isModified,
-  modifiedObject: isModifiedObject,
+  added: {
+    name: 'added',
+    requirements: isAdded,
+  },
+  deleted: {
+    name: 'deleted',
+    requirements: isDeleted,
+  },
+  unchanged: {
+    name: 'unchanged',
+    requirements: isUnchanged,
+  },
+  modified: {
+    name: 'modified',
+    requirements: isModified,
+  },
+  modifiedObject: {
+    name: 'modifiedObject',
+    requirements: isModifiedObject,
+  },
 };
 
+function isState(testee) {
+  return function test(state) {
+    return check(state.requirements(testee));
+  };
+}
+
 export default function testType(testee) {
-  return Object.keys(router).find((op) => check(router[op](testee)));
+  const checker = isState(testee);
+  return Object.values(router).find(checker).name;
 }

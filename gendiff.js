@@ -25,9 +25,7 @@ function router(objects, callback) {
         type,
         payload: {
           key,
-          value: callback(
-            ...objects.map((obj) => obj[key]).filter(Boolean),
-          ),
+          value: callback(...objects.map((obj) => obj[key]).filter(Boolean)),
         },
       }),
     }[type];

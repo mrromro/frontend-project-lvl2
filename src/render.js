@@ -17,7 +17,7 @@ function render(record) {
     case 'unchanged':
       return { [`  ${key}`]: value };
     case 'modifiedObject':
-      return { [`  ${key}`]: value };
+      return { [`  ${key}`]: render(value) };
     default: {
       throw new Error(`unexpected type: ${type}`);
     }
