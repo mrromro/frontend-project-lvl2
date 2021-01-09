@@ -17,23 +17,19 @@ function router(objects, callback) {
         type,
         payload: { key, value: collection[key] },
       }),
-      modified: ({ key, value, collection }) => {
-        if (typeof collection[key] === 'object') {
-          return {
-            type: 'unchanged',
-            payload: {
-              key,
-              value: callback(
-                ...objects.map((obj) => obj[key]).filter(Boolean),
-              ),
-            },
-          };
-        }
-        return {
-          type,
-          payload: { key, value: collection[key], newValue: value },
-        };
-      },
+      modified: ({ key, value, collection }) => ({
+        type,
+        payload: { key, value: collection[key], newValue: value },
+      }),
+      modifiedObject: ({ key }) => ({
+        type,
+        payload: {
+          key,
+          value: callback(
+            ...objects.map((obj) => obj[key]).filter(Boolean),
+          ),
+        },
+      }),
     }[type];
   };
 }
