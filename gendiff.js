@@ -13,10 +13,9 @@ function router(objects, callback) {
         type,
         payload: { key, value: collection[key] },
       }),
-      unchanged: ({ key, collection }) => ({
-        type,
-        payload: { key, value: collection[key] },
-      }),
+      get unchanged() {
+        return this.deleted;
+      },
       modified: ({ key, value, collection }) => ({
         type,
         payload: { key, value: collection[key], newValue: value },

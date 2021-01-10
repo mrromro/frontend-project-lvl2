@@ -1,8 +1,8 @@
 function render(record) {
-  const { type, payload } = record;
-  if (payload === undefined) {
+  if (record instanceof Array) {
     return record.reduce((acc, rec) => ({ ...acc, ...render(rec) }), {});
   }
+  const { type, payload } = record;
   const { key, value, newValue } = payload;
   switch (type) {
     case 'added':
