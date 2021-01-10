@@ -1,4 +1,3 @@
-import parser from './src/parsers.js';
 import utils from './src/utils.js';
 
 const checker = (keyAndObjects) => (fns) => {
@@ -23,7 +22,7 @@ const getState = (router) => (keyAndObjects) => {
   return Object.values(router).find(stateTest);
 };
 
-const makeRecord = (type) => ({ key, value, newValue }) => {
+const makeRecord = (type, { key, value, newValue }) => {
   const payload = { key, value };
   if (newValue) payload.newValue = newValue;
   return { type, payload };
@@ -31,56 +30,44 @@ const makeRecord = (type) => ({ key, value, newValue }) => {
 
 const router = {
   added: {
-    name: 'added',
+    type: 'added',
     requirements: [isAdded],
-    get message() {
-      const template = makeRecord(this.name);
-      return function record({ key, obj2 }) {
-        const value = obj2[key];
-        return template({ key, value });
-      };
+    payload: ({ key, obj2 }) => {
+      const value = obj2[key];
+      return { key, value };
     },
   },
   deleted: {
-    name: 'deleted',
+    type: 'deleted',
     requirements: [isDeleted],
-    get message() {
-      const template = makeRecord(this.name);
-      return function record({ key, obj1 }) {
-        const value = obj1[key];
-        return template({ key, value });
-      };
+    payload: ({ key, obj1 }) => {
+      const value = obj1[key];
+      return { key, value };
     },
   },
   unchanged: {
-    name: 'unchanged',
+    type: 'unchanged',
     requirements: [isUnchanged],
-    get message() {
-      const template = makeRecord(this.name);
-      return function record({ key, obj2 }) {
-        const value = obj2[key];
-        return template({ key, value });
-      };
+    payload: ({ key, obj2 }) => {
+      const value = obj2[key];
+      return { key, value };
     },
   },
   modified: {
-    name: 'modified',
+    type: 'modified',
     requirements: [isModified],
-    get message() {
-      const template = makeRecord(this.name);
-      return function record({ key, obj1, obj2 }) {
-        const value = obj1[key];
-        const newValue = obj2[key];
-        return template({ key, value, newValue });
-      };
+    payload: ({ key, obj1, obj2 }) => {
+      const value = obj1[key];
+      const newValue = obj2[key];
+      return { key, value, newValue };
     },
   },
 };
 
 const testType = (obj1, obj2) => (key) => {
   const keyAndObjects = { key, obj1, obj2 };
-  const state = getState(router)(keyAndObjects);
-  return state.message(keyAndObjects);
+  const { type, payload } = getState(router)(keyAndObjects);
+  return makeRecord(type, payload(keyAndObjects));
 };
 
 const diff = (obj1, obj2) => {
@@ -88,13 +75,10 @@ const diff = (obj1, obj2) => {
   const getType = testType(obj1, obj2);
   return keys.map((key) => {
     if (isObejcts(obj1[key], obj2[key])) {
-      return makeRecord('unchanged')({ key, value: diff(obj1[key], obj2[key]) });
+      return makeRecord('unchanged', { key, value: diff(obj1[key], obj2[key]) });
     }
     return getType(key);
   });
 };
 
-const deep1 = parser.fileToObject('./__tests__/__fixtures__/deep1.json');
-const deep2 = parser.fileToObject('./__tests__/__fixtures__/deep2.json');
-// diff(deep1, deep2);
-console.log(JSON.stringify(diff(deep1, deep2), null, 2));
+export default diff;
