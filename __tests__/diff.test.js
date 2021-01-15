@@ -2,7 +2,16 @@ import { describe, expect, test } from '@jest/globals';
 import diff from '../src/diff.js';
 
 const { makeTree, compareTrees, compare } = diff;
-
+const finalTree = [
+  {
+    key: 'key',
+    type: 'unchanged',
+    value: [
+      { key: 'key', type: 'deleted', value: 'value' },
+      { key: 'key', type: 'added', value: 'value-modified' },
+    ],
+  },
+];
 describe('diff.makeTree tests', () => {
   test('empty call', () => {
     const received = makeTree();
@@ -72,17 +81,7 @@ describe('diff.compareTrees tests', () => {
     const oldTree = makeTree({ key: { key: 'value' } });
     const newTree = makeTree({ key: { key: 'value-modified' } });
     const received = compareTrees(oldTree, newTree);
-    const expected = [
-      {
-        key: 'key',
-        type: 'unchanged',
-        value: [
-          { key: 'key', type: 'deleted', value: 'value' },
-          { key: 'key', type: 'added', value: 'value-modified' },
-        ],
-      },
-    ];
-    expect(received).toStrictEqual(expected);
+    expect(received).toStrictEqual(finalTree);
   });
 });
 
@@ -90,15 +89,5 @@ test('compare nested objects', () => {
   const oldData = { key: { key: 'value' } };
   const newData = { key: { key: 'value-modified' } };
   const received = compare(oldData, newData);
-  const expected = [
-    {
-      key: 'key',
-      type: 'unchanged',
-      value: [
-        { key: 'key', type: 'deleted', value: 'value' },
-        { key: 'key', type: 'added', value: 'value-modified' },
-      ],
-    },
-  ];
-  expect(received).toStrictEqual(expected);
+  expect(received).toStrictEqual(finalTree);
 });
