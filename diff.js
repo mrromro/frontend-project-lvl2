@@ -1,84 +1,57 @@
-import utils from './src/utils.js';
+const createNode = ({ key = null, type = 'unchanged', value = null } = {}) => ({
+  key,
+  type,
+  value,
+});
 
-const checker = (keyAndObjects) => (fns) => {
-  const checkResult = fns.map((fn) => fn(keyAndObjects));
-  return checkResult.every(Boolean);
+const isObject = (obj) => typeof obj === 'object';
+const getTreeKeys = (tree) => tree.map(({ key }) => key);
+const getTreesKeys = (...trees) => {
+  const allKeys = trees.map(getTreeKeys).flat().sort();
+  const uniqKeys = [...new Set(allKeys)];
+  return uniqKeys;
 };
-const isObejcts = (...objs) => objs.every((obj) => typeof obj === 'object');
-const isAdded = ({ key, obj1 }) => obj1[key] === undefined;
-const isDeleted = ({ key, obj2 }) => obj2[key] === undefined;
-const isUnchanged = ({ key, obj1, obj2 }) => obj1[key] === obj2[key];
-const isModified = (keyAndObjects) => {
-  const fns = [isAdded, isDeleted, isUnchanged];
-  return !checker(keyAndObjects)(fns);
+const keysDifference = (all, sub) => all.filter((key) => !sub.includes(key));
+const getNode = (slice, keyToFind) => slice.find(({ key }) => key === keyToFind);
+const getNodeCopy = (keyToFind) => (slice) => (type) => {
+  const node = getNode(slice, keyToFind);
+  const { key, value } = node;
+  return createNode({ key, type, value });
 };
-const isState = (keyAndObjects) => (state) => {
-  const { requirements } = state;
-  return checker(keyAndObjects)(requirements);
-};
+const isIncluded = (list) => (key) => list.includes(key);
 
-const getState = (router) => (keyAndObjects) => {
-  const stateTest = isState(keyAndObjects);
-  return Object.values(router).find(stateTest);
-};
-
-const makeRecord = (type, { key, value, newValue }) => {
-  const payload = { key, value };
-  if (newValue) payload.newValue = newValue;
-  return { type, payload };
-};
-
-const router = {
-  added: {
-    type: 'added',
-    requirements: [isAdded],
-    payload: ({ key, obj2 }) => {
-      const value = obj2[key];
-      return { key, value };
-    },
-  },
-  deleted: {
-    type: 'deleted',
-    requirements: [isDeleted],
-    payload: ({ key, obj1 }) => {
-      const value = obj1[key];
-      return { key, value };
-    },
-  },
-  unchanged: {
-    type: 'unchanged',
-    requirements: [isUnchanged],
-    payload: ({ key, obj2 }) => {
-      const value = obj2[key];
-      return { key, value };
-    },
-  },
-  modified: {
-    type: 'modified',
-    requirements: [isModified],
-    payload: ({ key, obj1, obj2 }) => {
-      const value = obj1[key];
-      const newValue = obj2[key];
-      return { key, value, newValue };
-    },
-  },
-};
-
-const testType = (obj1, obj2) => (key) => {
-  const keyAndObjects = { key, obj1, obj2 };
-  const { type, payload } = getState(router)(keyAndObjects);
-  return makeRecord(type, payload(keyAndObjects));
-};
-
-const diff = (obj1, obj2) => {
-  const keys = utils.getUniqKeys([obj1, obj2]);
-  const getType = testType(obj1, obj2);
-  return keys.map((key) => {
-    if (isObejcts(obj1[key], obj2[key])) {
-      return makeRecord('unchanged', { key, value: diff(obj1[key], obj2[key]) });
-    }
-    return getType(key);
+const makeTree = (obj) => {
+  if (!isObject(obj)) return obj;
+  const entries = Object.entries(obj).sort();
+  const children = entries.map(([key, valueToProcess]) => {
+    const value = makeTree(valueToProcess);
+    return createNode({ key, value });
   });
+  return children;
 };
 
-export default diff;
+const compareTrees = (oldTree, newTree) => {
+  const oldKeys = getTreeKeys(oldTree);
+  const newKeys = getTreeKeys(newTree);
+  const allKeys = getTreesKeys(oldTree, newTree);
+  const isAdded = isIncluded(keysDifference(allKeys, oldKeys));
+  const isDeleted = isIncluded(keysDifference(allKeys, newKeys));
+  return allKeys.reduce((tree, key) => {
+    const getCopy = getNodeCopy(key);
+    if (isAdded(key)) return [...tree, getCopy(newTree)('added')];
+    if (isDeleted(key)) return [...tree, getCopy(oldTree)('deleted')];
+    const oldNode = getNode(oldTree, key);
+    const newNode = getNode(newTree, key);
+    if (oldNode.value === newNode.value) return [...tree, oldNode];
+    if (isObject(newNode.value) && isObject(oldNode.value)) {
+      const value = compareTrees(oldNode.value, newNode.value);
+      return [...tree, createNode({ key, value })];
+    }
+    return [...tree, getCopy(oldTree)('deleted'), getCopy(newTree)('added')];
+  }, []);
+};
+
+export default {
+  compareTrees,
+  makeTree,
+};
