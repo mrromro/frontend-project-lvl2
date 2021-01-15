@@ -11,3 +11,8 @@ plugins:
   - jest
 rules:
   import/extensions: off
+  max-len:
+    - 2
+    - 80
+    - 2
+

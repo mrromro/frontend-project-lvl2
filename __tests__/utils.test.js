@@ -12,7 +12,10 @@ describe('Test utility getUniqKeys', () => {
   });
 
   test('one non-empty object', () => {
-    const data = { key: 'value', 'another key': 'another value' };
+    const data = {
+      key: 'value',
+      'another key': 'another value',
+    };
     const expected = ['another key', 'key'];
     const received = utils.getUniqKeys([data]);
     expect(received).toStrictEqual(expected);
