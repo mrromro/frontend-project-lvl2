@@ -10,7 +10,7 @@ program
   .action(async (filepath1, filepath2) => {
     // eslint-disable-next-line no-console
     console.log(await gendiff(filepath1, filepath2, program.format));
-    program.exit(0);
+    process.exit(0);
   });
 
 program.parse(process.argv);
