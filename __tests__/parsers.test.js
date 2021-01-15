@@ -2,7 +2,7 @@ import { describe, test, expect } from '@jest/globals';
 import { promises as fs } from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
-import parsers from '../src/parsers.js';
+import parsers from '../src/parsers/parsers.js';
 import jsonFile from './__fixtures__/flat1.json';
 
 let objects;
