@@ -24,4 +24,8 @@ function filesToObjects(...files) {
   return files.map(fileToObject);
 }
 
-export default { chooseLoader, fileToObject, filesToObjects };
+export default {
+  chooseLoader,
+  fileToObject,
+  filesToObjects,
+};

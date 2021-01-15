@@ -5,6 +5,7 @@ const createNode = ({ key = null, type = 'unchanged', value = null } = {}) => ({
 });
 
 const isObject = (obj) => typeof obj === 'object';
+
 const getTreeKeys = (tree) => tree.map(({ key }) => key);
 const getTreesKeys = (...trees) => {
   const allKeys = trees.map(getTreeKeys).flat().sort();
@@ -12,13 +13,14 @@ const getTreesKeys = (...trees) => {
   return uniqKeys;
 };
 const keysDifference = (all, sub) => all.filter((key) => !sub.includes(key));
-const getNode = (slice, keyToFind) => slice.find(({ key }) => key === keyToFind);
+const isIncluded = (list) => (key) => list.includes(key);
+
+const getNode = (tier, keyToFind) => tier.find(({ key }) => key === keyToFind);
 const getNodeCopy = (keyToFind) => (slice) => (type) => {
   const node = getNode(slice, keyToFind);
   const { key, value } = node;
   return createNode({ key, type, value });
 };
-const isIncluded = (list) => (key) => list.includes(key);
 
 const makeTree = (obj) => {
   if (!isObject(obj)) return obj;
@@ -36,7 +38,8 @@ const compareTrees = (oldTree, newTree) => {
   const allKeys = getTreesKeys(oldTree, newTree);
   const isAdded = isIncluded(keysDifference(allKeys, oldKeys));
   const isDeleted = isIncluded(keysDifference(allKeys, newKeys));
-  return allKeys.reduce((tree, key) => {
+
+  const tier = allKeys.reduce((tree, key) => {
     const getCopy = getNodeCopy(key);
     if (isAdded(key)) return [...tree, getCopy(newTree)('added')];
     if (isDeleted(key)) return [...tree, getCopy(oldTree)('deleted')];
@@ -49,9 +52,17 @@ const compareTrees = (oldTree, newTree) => {
     }
     return [...tree, getCopy(oldTree)('deleted'), getCopy(newTree)('added')];
   }, []);
+
+  return tier;
+};
+
+const compare = (oldData, newData) => {
+  const [oldTree, newTree] = [makeTree(oldData), makeTree(newData)];
+  return compareTrees(oldTree, newTree);
 };
 
 export default {
+  compare,
   compareTrees,
   makeTree,
 };
