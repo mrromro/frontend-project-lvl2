@@ -23,7 +23,7 @@ const getNodeCopy = (keyToFind) => (slice) => (type) => {
 };
 
 const makeTree = (obj) => {
-  if (!isObject(obj)) return obj;
+  if (!isObject(obj) || obj === null) return obj;
   const entries = Object.entries(obj).sort();
   const children = entries.map(([key, valueToProcess]) => {
     const value = makeTree(valueToProcess);
