@@ -4,7 +4,10 @@ const createNode = ({ key = null, type = 'unchanged', value = null } = {}) => ({
   value,
 });
 
-const isObject = (obj) => typeof obj === 'object' && obj !== null;
+const isObjects = (...objs) => {
+  const check = objs.map((obj) => typeof obj === 'object' && obj !== null);
+  return check.every(Boolean);
+};
 
 const getTreeKeys = (tree) => tree.map(({ key }) => key);
 const getTreesKeys = (...trees) => {
@@ -12,18 +15,12 @@ const getTreesKeys = (...trees) => {
   const uniqKeys = [...new Set(allKeys)];
   return uniqKeys;
 };
-const keysDifference = (all, sub) => all.filter((key) => !sub.includes(key));
-const isIncluded = (list) => (key) => list.includes(key);
 
 const getNode = (tier, keyToFind) => tier.find(({ key }) => key === keyToFind);
-const getNodeCopy = (keyToFind) => (slice) => (type) => {
-  const node = getNode(slice, keyToFind);
-  const { key, value } = node;
-  return createNode({ key, type, value });
-};
+const copyNode = (node, options) => ({ ...node, ...options });
 
 const makeTree = (obj) => {
-  if (!isObject(obj)) return obj;
+  if (!isObjects(obj)) return obj;
   const entries = Object.entries(obj).sort();
   const children = entries.map(([key, valueToProcess]) => {
     const value = makeTree(valueToProcess);
@@ -46,12 +43,15 @@ const nested = (nodes) => {
     oldNode: { value: oldValue },
     newNode: { value: newValue },
   } = nodes;
-  return isObject(oldValue) && isObject(newValue);
+  return isObjects(oldValue, newValue);
 };
 
-const rule = (callback) => (...conditions) => (nodes) => conditions
-  .map((condition) => condition(nodes))
-  .every(callback);
+const rule = (callback) => (conditions) => (nodes) => {
+  const result = conditions
+    .map((condition) => condition(nodes))
+    .every(callback);
+  return result;
+};
 const all = rule(Boolean);
 const not = rule((arg) => !arg);
 
@@ -80,10 +80,10 @@ const types = {
   },
 };
 
-const getType = (nodes, router = types) => {
+const typeNode = (nodes, router = types) => {
   const allTypes = Object.values(router);
   const type = allTypes.find(({ requirements }) => check(requirements)(nodes));
-  return type.name;
+  return { type: type.name, ...nodes };
 };
 
 const classify = (oldTree, newTree) => (key) => {
@@ -91,31 +91,48 @@ const classify = (oldTree, newTree) => (key) => {
     oldNode: getNode(oldTree, key),
     newNode: getNode(newTree, key),
   };
-  return getType(nodes);
+  return typeNode(nodes);
 };
 
-const setState = (state) => (...nodes) => state.concat(nodes);
+const makeState = (typedNode, callback) => {
+  const { type, oldNode, newNode } = typedNode;
+  let payload;
+  switch (type) {
+    case 'added':
+      payload = [copyNode(newNode, { type })];
+      break;
+    case 'deleted':
+      payload = [copyNode(oldNode, { type })];
+      break;
+    case 'equal':
+      payload = [copyNode(oldNode)];
+      break;
+    case 'modified':
+      payload = [
+        copyNode(oldNode, { type: 'deleted' }),
+        copyNode(newNode, { type: 'added' }),
+      ];
+      break;
+    case 'nested':
+      payload = [
+        copyNode(oldNode),
+        {
+          value: callback(oldNode.value, newNode.value),
+        },
+      ];
+      break;
+    default:
+      throw new Error(`Unexpected node type: ${type}`);
+  }
+  return payload;
+};
 
 const compareTrees = (oldTree, newTree) => {
-  const oldKeys = getTreeKeys(oldTree);
-  const newKeys = getTreeKeys(newTree);
-  const allKeys = getTreesKeys(oldTree, newTree);
-  const isAdded = isIncluded(keysDifference(allKeys, oldKeys));
-  const isDeleted = isIncluded(keysDifference(allKeys, newKeys));
+  const findType = classify(oldTree, newTree);
 
-  const tier = allKeys.reduce((tree, key) => {
-    const getCopy = getNodeCopy(key);
-    const addToState = setState(tree);
-    if (isAdded(key)) return addToState(getCopy(newTree)('added'));
-    if (isDeleted(key)) return [...tree, getCopy(oldTree)('deleted')];
-    const oldNode = getNode(oldTree, key);
-    const newNode = getNode(newTree, key);
-    if (oldNode.value === newNode.value) return [...tree, oldNode];
-    if (isObject(newNode.value) && isObject(oldNode.value)) {
-      const value = compareTrees(oldNode.value, newNode.value);
-      return [...tree, createNode({ key, value })];
-    }
-    return [...tree, getCopy(oldTree)('deleted'), getCopy(newTree)('added')];
+  const tier = getTreesKeys(oldTree, newTree).reduce((tree, key) => {
+    const typedNode = findType(key);
+    return [...tree, ...makeState(typedNode, compareTrees)];
   }, []);
 
   return tier;
