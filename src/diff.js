@@ -97,28 +97,18 @@ const classify = (oldTree, newTree) => (key) => {
 const makeState = (typedNode, callback) => {
   const { type, oldNode, newNode } = typedNode;
   const payloads = {
-    added() {
-      return [copyNode(newNode, { type })];
-    },
-    deleted() {
-      return [copyNode(oldNode, { type })];
-    },
-    equal() {
-      return [copyNode(oldNode, { type: 'unchanged' })];
-    },
-    modified() {
-      return [
-        copyNode(oldNode, { type: 'deleted' }),
-        copyNode(newNode, { type: 'added' }),
-      ];
-    },
-    nested() {
-      return [
-        copyNode(oldNode, {
-          value: callback(oldNode.value, newNode.value),
-        }),
-      ];
-    },
+    added: () => [copyNode(newNode, { type })],
+    deleted: () => [copyNode(oldNode, { type })],
+    equal: () => [copyNode(oldNode, { type: 'unchanged' })],
+    modified: () => [
+      copyNode(oldNode, { type: 'deleted' }),
+      copyNode(newNode, { type: 'added' }),
+    ],
+    nested: () => [
+      copyNode(oldNode, {
+        value: callback(oldNode.value, newNode.value),
+      }),
+    ],
   };
   return payloads[type]();
 };
