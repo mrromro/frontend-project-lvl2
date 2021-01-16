@@ -105,7 +105,7 @@ const makeState = (typedNode, callback) => {
       payload = [copyNode(oldNode, { type })];
       break;
     case 'equal':
-      payload = [copyNode(oldNode)];
+      payload = [copyNode(oldNode, { type: 'unchanged' })];
       break;
     case 'modified':
       payload = [
@@ -115,10 +115,9 @@ const makeState = (typedNode, callback) => {
       break;
     case 'nested':
       payload = [
-        copyNode(oldNode),
-        {
+        copyNode(oldNode, {
           value: callback(oldNode.value, newNode.value),
-        },
+        }),
       ];
       break;
     default:
