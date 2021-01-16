@@ -96,34 +96,31 @@ const classify = (oldTree, newTree) => (key) => {
 
 const makeState = (typedNode, callback) => {
   const { type, oldNode, newNode } = typedNode;
-  let payload;
-  switch (type) {
-    case 'added':
-      payload = [copyNode(newNode, { type })];
-      break;
-    case 'deleted':
-      payload = [copyNode(oldNode, { type })];
-      break;
-    case 'equal':
-      payload = [copyNode(oldNode, { type: 'unchanged' })];
-      break;
-    case 'modified':
-      payload = [
+  const payloads = {
+    added() {
+      return [copyNode(newNode, { type })];
+    },
+    deleted() {
+      return [copyNode(oldNode, { type })];
+    },
+    equal() {
+      return [copyNode(oldNode, { type: 'unchanged' })];
+    },
+    modified() {
+      return [
         copyNode(oldNode, { type: 'deleted' }),
         copyNode(newNode, { type: 'added' }),
       ];
-      break;
-    case 'nested':
-      payload = [
+    },
+    nested() {
+      return [
         copyNode(oldNode, {
           value: callback(oldNode.value, newNode.value),
         }),
       ];
-      break;
-    default:
-      throw new Error(`Unexpected node type: ${type}`);
-  }
-  return payload;
+    },
+  };
+  return payloads[type]();
 };
 
 const compareTrees = (oldTree, newTree) => {
