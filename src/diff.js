@@ -32,6 +32,70 @@ const makeTree = (obj) => {
   return children;
 };
 
+const added = ({ oldNode }) => oldNode === undefined;
+const deleted = ({ newNode }) => newNode === undefined;
+const equal = (nodes) => {
+  const {
+    oldNode: { value: oldValue },
+    newNode: { value: newValue },
+  } = nodes;
+  return oldValue === newValue;
+};
+const nested = (nodes) => {
+  const {
+    oldNode: { value: oldValue },
+    newNode: { value: newValue },
+  } = nodes;
+  return isObject(oldValue) && isObject(newValue);
+};
+
+const rule = (callback) => (...conditions) => (nodes) => conditions
+  .map((condition) => condition(nodes))
+  .every(callback);
+const all = rule(Boolean);
+const not = rule((arg) => !arg);
+
+const check = ([fn, conditions]) => fn(conditions);
+
+const types = {
+  added: {
+    name: 'added',
+    requirements: [all, [added]],
+  },
+  deleted: {
+    name: 'deleted',
+    requirements: [all, [deleted]],
+  },
+  equal: {
+    name: 'equal',
+    requirements: [all, [equal]],
+  },
+  nested: {
+    name: 'nested',
+    requirements: [all, [nested]],
+  },
+  modified: {
+    name: 'modified',
+    requirements: [not, [added, deleted, equal, nested]],
+  },
+};
+
+const getType = (nodes, router = types) => {
+  const allTypes = Object.values(router);
+  const type = allTypes.find(({ requirements }) => check(requirements)(nodes));
+  return type.name;
+};
+
+const classify = (oldTree, newTree) => (key) => {
+  const nodes = {
+    oldNode: getNode(oldTree, key),
+    newNode: getNode(newTree, key),
+  };
+  return getType(nodes);
+};
+
+const setState = (state) => (...nodes) => state.concat(nodes);
+
 const compareTrees = (oldTree, newTree) => {
   const oldKeys = getTreeKeys(oldTree);
   const newKeys = getTreeKeys(newTree);
@@ -41,7 +105,8 @@ const compareTrees = (oldTree, newTree) => {
 
   const tier = allKeys.reduce((tree, key) => {
     const getCopy = getNodeCopy(key);
-    if (isAdded(key)) return [...tree, getCopy(newTree)('added')];
+    const addToState = setState(tree);
+    if (isAdded(key)) return addToState(getCopy(newTree)('added'));
     if (isDeleted(key)) return [...tree, getCopy(oldTree)('deleted')];
     const oldNode = getNode(oldTree, key);
     const newNode = getNode(newTree, key);
