@@ -1,6 +1,12 @@
 import { test, describe } from '@jest/globals';
 import formatter from '../src/formatters/plain.js';
 
+const record1 = [{ key: 'key1', value: 'value1' }];
+const record2 = [
+  { key: 'key2', value: 'value2', type: 'added' },
+  { key: 'key3', value: 'value3', type: 'removed' },
+];
+
 describe('plain formatter test', () => {
   test('empty tree test', () => {
     const received = formatter([]);
@@ -12,11 +18,7 @@ describe('plain formatter test', () => {
     expect(received).toBe('');
   });
   test('plain tree essential test', () => {
-    const tree = [
-      { key: 'key1', value: 'value1' },
-      { key: 'key2', value: 'value2', type: 'added' },
-      { key: 'key3', value: 'value3', type: 'removed' },
-    ];
+    const tree = record1.concat(record2);
     const received = formatter(tree);
     const expected = [
       "Property 'key2' was added with value: 'value2'",
@@ -28,10 +30,7 @@ describe('plain formatter test', () => {
     const tree = [
       {
         key: 'key1',
-        value: [
-          { key: 'key2', value: 'value2', type: 'added' },
-          { key: 'key3', value: 'value3', type: 'removed' },
-        ],
+        value: record2,
       },
       { key: 'key4', value: 'value4' },
     ];
