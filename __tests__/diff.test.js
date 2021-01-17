@@ -5,10 +5,13 @@ const { makeTree, compareTrees, compare } = diff;
 const finalTree = [
   {
     key: 'key',
-    type: 'unchanged',
     value: [
-      { key: 'key', type: 'deleted', value: 'value' },
-      { key: 'key', type: 'added', value: 'value-modified' },
+      {
+        key: 'key',
+        type: 'updated',
+        value: 'value',
+        newValue: 'value-modified',
+      },
     ],
   },
 ];
@@ -30,7 +33,7 @@ describe('diff.makeTree tests', () => {
   });
   test('plain object', () => {
     const received = makeTree({ key: 'value' });
-    const expected = [{ key: 'key', type: 'unchanged', value: 'value' }];
+    const expected = [{ key: 'key', value: 'value' }];
     expect(received).toEqual(expected);
   });
   test('nested object', () => {
@@ -38,11 +41,9 @@ describe('diff.makeTree tests', () => {
     const expected = [
       {
         key: 'key',
-        type: 'unchanged',
         value: [
           {
             key: 'key',
-            type: 'unchanged',
             value: 'value',
           },
         ],
@@ -72,8 +73,12 @@ describe('diff.compareTrees tests', () => {
     const newTree = makeTree({ key: 'value-modified' });
     const received = compareTrees(oldTree, newTree);
     const expected = [
-      { key: 'key', type: 'deleted', value: 'value' },
-      { key: 'key', type: 'added', value: 'value-modified' },
+      {
+        key: 'key',
+        type: 'updated',
+        value: 'value',
+        newValue: 'value-modified',
+      },
     ];
     expect(received).toStrictEqual(expected);
   });
