@@ -1,8 +1,4 @@
-const createNode = ({ key = null, type = 'unchanged', value = null } = {}) => ({
-  key,
-  type,
-  value,
-});
+const createNode = (options = {}) => ({ ...options });
 
 const isObjects = (...objs) => {
   const check = objs.map((obj) => typeof obj === 'object' && obj !== null);
@@ -17,17 +13,6 @@ const getTreesKeys = (...trees) => {
 };
 
 const getNode = (tier, keyToFind) => tier.find(({ key }) => key === keyToFind);
-const copyNode = (node, options) => ({ ...node, ...options });
-
-const makeTree = (obj) => {
-  if (!isObjects(obj)) return obj;
-  const entries = Object.entries(obj).sort();
-  const children = entries.map(([key, valueToProcess]) => {
-    const value = makeTree(valueToProcess);
-    return createNode({ key, value });
-  });
-  return children;
-};
 
 const added = ({ oldNode }) => oldNode === undefined;
 const deleted = ({ newNode }) => newNode === undefined;
@@ -97,20 +82,31 @@ const classify = (oldTree, newTree) => (key) => {
 const makeState = (typedNode, callback) => {
   const { type, oldNode, newNode } = typedNode;
   const payloads = {
-    added: () => [copyNode(newNode, { type })],
-    deleted: () => [copyNode(oldNode, { type })],
-    equal: () => [copyNode(oldNode, { type: 'unchanged' })],
+    added: () => [createNode({ ...newNode, type })],
+    deleted: () => [createNode({ ...oldNode, type })],
+    equal: () => [createNode(oldNode)],
     modified: () => [
-      copyNode(oldNode, { type: 'deleted' }),
-      copyNode(newNode, { type: 'added' }),
+      createNode({ ...oldNode, type: 'deleted' }),
+      createNode({ ...newNode, type: 'added' }),
     ],
     nested: () => [
-      copyNode(oldNode, {
+      createNode({
+        ...oldNode,
         value: callback(oldNode.value, newNode.value),
       }),
     ],
   };
   return payloads[type]();
+};
+
+const makeTree = (obj) => {
+  if (!isObjects(obj)) return obj;
+  const entries = Object.entries(obj).sort();
+  const children = entries.map(([key, valueToProcess]) => {
+    const value = makeTree(valueToProcess);
+    return createNode({ key, value });
+  });
+  return children;
 };
 
 const compareTrees = (oldTree, newTree) => {

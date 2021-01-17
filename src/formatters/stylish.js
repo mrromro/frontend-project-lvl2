@@ -1,7 +1,7 @@
 const templates = {
   added: '+',
   deleted: '-',
-  unchanged: ' ',
+  undefined: ' ',
   object: (obj, level = 0) => `{\n${obj}\n${'  '.repeat(level)}}`,
 };
 
