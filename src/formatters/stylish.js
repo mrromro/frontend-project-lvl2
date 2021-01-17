@@ -2,7 +2,7 @@ const template = (pad) => (key, value) => `${pad} ${key}: ${value}`;
 
 const templates = {
   added: template('+'),
-  deleted: template('-'),
+  removed: template('-'),
   undefined: template(' '),
   object: (obj, level = 0) => `{\n${obj}\n${'  '.repeat(level)}}`,
 };
@@ -15,9 +15,9 @@ const record = (node, indent) => {
     //
     newValue,
   } = node;
-  if (type === 'modified') {
+  if (type === 'updated') {
     return [
-      indent + templates.deleted(key, value),
+      indent + templates.removed(key, value),
       indent + templates.added(key, newValue),
     ].join('\n');
   }

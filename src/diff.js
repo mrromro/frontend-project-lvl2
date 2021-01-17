@@ -47,8 +47,8 @@ const types = {
     name: 'added',
     requirements: [all, [added]],
   },
-  deleted: {
-    name: 'deleted',
+  removed: {
+    name: 'removed',
     requirements: [all, [deleted]],
   },
   equal: {
@@ -59,8 +59,8 @@ const types = {
     name: 'nested',
     requirements: [all, [nested]],
   },
-  modified: {
-    name: 'modified',
+  updated: {
+    name: 'updated',
     requirements: [not, [added, deleted, equal, nested]],
   },
 };
@@ -83,13 +83,13 @@ const makeState = (typedNode, callback) => {
   const { type, oldNode, newNode } = typedNode;
   const payloads = {
     added: () => createNode({ ...newNode, type }),
-    deleted: () => createNode({ ...oldNode, type }),
+    removed: () => createNode({ ...oldNode, type }),
     equal: () => createNode(oldNode),
-    modified: () => createNode({ ...oldNode, newValue: newNode.value, type }),
-    nested: () => createNode({
-      ...oldNode,
-      value: callback(oldNode.value, newNode.value),
-    }),
+    updated: () => createNode({ ...oldNode, newValue: newNode.value, type }),
+    nested: () => {
+      const value = callback(oldNode.value, newNode.value);
+      return createNode({ ...oldNode, value });
+    },
   };
   return payloads[type]();
 };
