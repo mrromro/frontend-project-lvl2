@@ -7,15 +7,15 @@ describe('plain formatter test', () => {
     expect(received).toBe('');
   });
   test('plain tree test', () => {
-    const tree = [{ key: 'key', value: 'value', type: 'unchanged' }];
+    const tree = [{ key: 'key', value: 'value' }];
     const received = formatter(tree);
     expect(received).toBe('');
   });
   test('plain tree essential test', () => {
     const tree = [
-      { key: 'key1', value: 'value1', type: 'unchanged' },
+      { key: 'key1', value: 'value1' },
       { key: 'key2', value: 'value2', type: 'added' },
-      { key: 'key3', value: 'value3', type: 'deleted' },
+      { key: 'key3', value: 'value3', type: 'removed' },
     ];
     const received = formatter(tree);
     const expected = [
@@ -30,11 +30,11 @@ describe('plain formatter test', () => {
         key: 'key1',
         value: [
           { key: 'key2', value: 'value2', type: 'added' },
-          { key: 'key3', value: 'value3', type: 'deleted' },
+          { key: 'key3', value: 'value3', type: 'removed' },
         ],
         type: 'unchanged',
       },
-      { key: 'key4', value: 'value4', type: 'unchanged' },
+      { key: 'key4', value: 'value4' },
     ];
     const received = formatter(tree);
     const expected = [
