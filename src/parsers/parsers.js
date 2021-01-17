@@ -1,6 +1,6 @@
 import path from 'path';
 import yaml from 'js-yaml';
-import { readFileSync } from 'fs';
+import { promises as p } from 'fs';
 
 function chooseLoader(filename) {
   const extension = path.extname(filename).toLowerCase();
@@ -14,14 +14,14 @@ function chooseLoader(filename) {
   }
 }
 
-function fileToObject(file) {
+async function fileToObject(file) {
   const addr = path.resolve(file);
-  const data = readFileSync(addr, 'utf-8');
+  const data = await p.readFile(addr, 'utf-8');
   return chooseLoader(file)(data);
 }
 
-function filesToObjects(...files) {
-  return files.map(fileToObject);
+async function filesToObjects(...files) {
+  return Promise.all(files.map(fileToObject));
 }
 
 export default {
