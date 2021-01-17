@@ -42,7 +42,7 @@ test('chooseLoader() test', () => {
 describe('Test file parsers by one file', () => {
   test('JSON filesToObject test with all json file', async () => {
     const expected = jsonFile;
-    const received = parsers.fileToObject(
+    const received = await parsers.fileToObject(
       path.join(__dirname, '__fixtures__/flat1.json'),
     );
     expect(received).toStrictEqual(expected);
@@ -51,17 +51,19 @@ describe('Test file parsers by one file', () => {
     const addr = path.join(__dirname, '__fixtures__/flat1.yaml');
     const data = await fs.readFile(addr, 'utf-8');
     const expected = yaml.load(data);
-    const received = parsers.fileToObject(addr);
+    const received = await parsers.fileToObject(addr);
     expect(received).toStrictEqual(expected);
   });
 });
 
 test('filesToObjects test with all json files', async () => {
   const paths = objects.map(({ addr }) => addr);
-  const expected = objects.map(({ data, addr }) => {
-    const loader = parsers.chooseLoader(addr);
-    return loader(data);
-  });
+  const expected = Promise.all(
+    objects.map(async ({ data, addr }) => {
+      const loader = parsers.chooseLoader(addr);
+      return loader(data);
+    }),
+  );
   const received = parsers.filesToObjects(...paths);
   expect(received).toStrictEqual(expected);
 });
