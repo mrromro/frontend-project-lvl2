@@ -82,19 +82,14 @@ const classify = (oldTree, newTree) => (key) => {
 const makeState = (typedNode, callback) => {
   const { type, oldNode, newNode } = typedNode;
   const payloads = {
-    added: () => [createNode({ ...newNode, type })],
-    deleted: () => [createNode({ ...oldNode, type })],
-    equal: () => [createNode(oldNode)],
-    modified: () => [
-      createNode({ ...oldNode, type: 'deleted' }),
-      createNode({ ...newNode, type: 'added' }),
-    ],
-    nested: () => [
-      createNode({
-        ...oldNode,
-        value: callback(oldNode.value, newNode.value),
-      }),
-    ],
+    added: () => createNode({ ...newNode, type }),
+    deleted: () => createNode({ ...oldNode, type }),
+    equal: () => createNode(oldNode),
+    modified: () => createNode({ ...oldNode, newValue: newNode.value, type }),
+    nested: () => createNode({
+      ...oldNode,
+      value: callback(oldNode.value, newNode.value),
+    }),
   };
   return payloads[type]();
 };
@@ -114,7 +109,7 @@ const compareTrees = (oldTree, newTree) => {
 
   const tier = getTreesKeys(oldTree, newTree).reduce((tree, key) => {
     const typedNode = findType(key);
-    return [...tree, ...makeState(typedNode, compareTrees)];
+    return [...tree, makeState(typedNode, compareTrees)];
   }, []);
 
   return tier;
