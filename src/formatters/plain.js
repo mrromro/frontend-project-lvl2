@@ -21,6 +21,7 @@ const templates = {
       `From ${decorate(value)} to ${decorate(newValue)}`,
     ].join(' ');
   },
+  undefined: () => {},
 };
 
 const isNested = (node) => {
@@ -28,22 +29,19 @@ const isNested = (node) => {
   return type === undefined && Array.isArray(value);
 };
 
-const isToPass = ({ type }) => {
-  const formatRecord = templates[type];
-  return formatRecord === undefined;
-};
-
 const formatter = (tier, path = '') => {
-  const outcome = tier.reduce((acc, node) => {
-    const { type, key, value } = node;
-    if (isNested(node)) {
-      const record = formatter(value, `${path}${key}.`);
-      return record ? [...acc, record] : acc;
-    }
-    if (isToPass(node)) return acc;
-    return [...acc, templates[type](node, path)];
-  }, []);
-  return outcome.join('\n');
+  const { key, value, type } = tier;
+  if (isNested(tier)) {
+    return formatter(value, `${path}${key}.`);
+  }
+  if (!Array.isArray(tier)) {
+    return templates[type](tier, path);
+  }
+  const outcome = tier.reduce(
+    (acc, node) => [...acc, formatter(node, `${path}`)],
+    [],
+  );
+  return outcome.filter(Boolean).join('\n');
 };
 
 export default formatter;
