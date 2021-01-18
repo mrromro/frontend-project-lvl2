@@ -62,8 +62,8 @@ const makeRecord = (node, level = 0, pad = '  ') => {
  * Traverse a difftree to assemble description of changes
  * @function
  * @exports
- * @param {*} tier - a node or a tier of a tree
- * @param {*} level - current indentation level
+ * @param {object} tier - a node or a tier of a tree
+ * @param {number} level - current indentation level
  * @returns {string} result to output
  */
 const formatter = (tier, level = 0) => {
