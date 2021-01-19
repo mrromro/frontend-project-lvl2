@@ -17,7 +17,7 @@
     "url": "https://github.com/mrromro/frontend-project-lvl2/issues"
   },
   "bin": {
-    "gendiff": "src/gendiff.js"
+    "gendiff": "src/bin/gendiff.js"
   },
   "homepage": "https://github.com/mrromro/frontend-project-lvl2#readme",
   "devDependencies": {
