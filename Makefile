@@ -26,3 +26,18 @@ publish:
 
 push:
 	git push origin --all
+
+test-step-3:
+	gendiff __tests__/__fixtures__/h_plain_1.json __tests__/__fixtures__/h_plain_2.json
+
+test-step-5:
+	gendiff __tests__/__fixtures__/h_plain_1.yaml __tests__/__fixtures__/h_plain_2.yaml
+
+test-step-6:
+	gendiff __tests__/__fixtures__/h_nested_1.json __tests__/__fixtures__/h_nested_2.json
+
+test-step-7:
+	gendiff --format plain __tests__/__fixtures__/h_nested_1.json __tests__/__fixtures__/h_nested_2.json
+
+test-step-8:
+	gendiff --format json __tests__/__fixtures__/h_nested_1.json __tests__/__fixtures__/h_nested_2.json
