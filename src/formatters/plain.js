@@ -1,5 +1,5 @@
 /**
- * Decorates value following its type
+ * Decorates value according to its type
  * @function
  * @param {*} value Any value of tree node to print
  * @returns {string} decorated value or value itself
@@ -16,11 +16,14 @@ const decorate = (value) => {
 };
 
 /**
+ * Contains functions (node, path) => {...} to make records
+ * from a template according to the node type property
  * @object
  * @readonly
  * @property {Function} - function to construct line from a template
  * @property {Function} undefined - fallback for case of attempt of
  * getting function with a key not existed
+ * @returns {Function} for making record
  */
 const templates = {
   added: (node, path) => {
@@ -42,6 +45,7 @@ const templates = {
  * A predicate to test if node is not terminal
  * @function
  * @param {object} node - tree node
+ * @returns {Boolean} if node is nested
  */
 const isNested = (node) => {
   const { type, value } = node;
@@ -53,7 +57,7 @@ const isNested = (node) => {
  * @function
  * @exports
  * @param {*} tier - a node or a tier of a tree
- * @param {*} path - assemble full path to node to process
+ * @param {string} path - assemble full path to node to process
  * @returns {string} result to output
  */
 const formatter = (tier, path = '') => {

@@ -3,8 +3,9 @@
  * @object
  * @readonly
  * All the properties are binded to functions
- * to let us be able use this[property]
+ * to let us use this[property]
  * @property {function} default - default route
+ * @this refers to the object itself
  */
 const router = {
   get default() {

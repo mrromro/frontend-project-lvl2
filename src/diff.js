@@ -1,3 +1,8 @@
+/**
+ * Creates an object by making shallow copy
+ * @param {Object} options - object to be copied
+ * @returns {Object} - shallow copy
+ */
 const createNode = (options = {}) => ({ ...options });
 
 const isObjects = (...objs) => {
