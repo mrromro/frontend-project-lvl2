@@ -17,6 +17,9 @@ const router = {
   get plain() {
     return './plain.js';
   },
+  get json() {
+    return './json.js';
+  },
 };
 
 /**
