@@ -1,0 +1,127 @@
+[
+  {
+    "key": "common",
+    "value": [
+      {
+        "key": "follow",
+        "value": false,
+        "type": "added"
+      },
+      {
+        "key": "setting1",
+        "value": "Value 1"
+      },
+      {
+        "key": "setting2",
+        "value": "200",
+        "type": "removed"
+      },
+      {
+        "key": "setting3",
+        "value": true,
+        "newValue": null,
+        "type": "updated"
+      },
+      {
+        "key": "setting4",
+        "value": "blah blah",
+        "type": "added"
+      },
+      {
+        "key": "setting5",
+        "value": [
+          {
+            "key": "key5",
+            "value": "value5"
+          }
+        ],
+        "type": "added"
+      },
+      {
+        "key": "setting6",
+        "value": [
+          {
+            "key": "doge",
+            "value": [
+              {
+                "key": "wow",
+                "value": "",
+                "newValue": "so much",
+                "type": "updated"
+              }
+            ]
+          },
+          {
+            "key": "key",
+            "value": "value"
+          },
+          {
+            "key": "ops",
+            "value": "vops",
+            "type": "added"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "key": "group1",
+    "value": [
+      {
+        "key": "baz",
+        "value": "bas",
+        "newValue": "bars",
+        "type": "updated"
+      },
+      {
+        "key": "foo",
+        "value": "bar"
+      },
+      {
+        "key": "nest",
+        "value": [
+          {
+            "key": "key",
+            "value": "value"
+          }
+        ],
+        "newValue": "str",
+        "type": "updated"
+      }
+    ]
+  },
+  {
+    "key": "group2",
+    "value": [
+      {
+        "key": "abc",
+        "value": "12345"
+      }
+    ],
+    "type": "removed"
+  },
+  {
+    "key": "group3",
+    "value": [
+      {
+        "key": "fee",
+        "value": "100500"
+      },
+      {
+        "key": "deep",
+        "value": [
+          {
+            "key": "id",
+            "value": [
+              {
+                "key": "number",
+                "value": 45
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "type": "added"
+  }
+]

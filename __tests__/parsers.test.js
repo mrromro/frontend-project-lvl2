@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import parsers from '../src/parsers/parsers.js';
-import jsonFile from './__fixtures__/flat1.json';
+import jsonFile from './__fixtures__/h_plain_1.json';
 
 let objects;
 
@@ -43,12 +43,12 @@ describe('Test file parsers by one file', () => {
   test('JSON filesToObject test with all json file', async () => {
     const expected = jsonFile;
     const received = await parsers.fileToObject(
-      path.join(__dirname, '__fixtures__/flat1.json'),
+      path.join(__dirname, '__fixtures__/h_plain_1.json'),
     );
     expect(received).toStrictEqual(expected);
   });
   test('YAML filesToObject test with all yaml file', async () => {
-    const addr = path.join(__dirname, '__fixtures__/flat1.yaml');
+    const addr = path.join(__dirname, '__fixtures__/h_plain_1.yaml');
     const data = await fs.readFile(addr, 'utf-8');
     const expected = yaml.load(data);
     const received = await parsers.fileToObject(addr);
