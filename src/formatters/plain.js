@@ -6,11 +6,11 @@
  * in case of unsupported type
  */
 const decorate = (value) => {
-  const type = typeof value;
+  const type = value === null ? null : typeof value;
   return (
     {
       string: `'${value}'`,
-      object: '[complex object]',
+      object: '[complex value]',
     }[type] ?? value
   );
 };
