@@ -77,7 +77,7 @@ describe('plain formatter test', () => {
     const [difftree] = await parser.filesToObjects(
       path.join(__dirname, '__fixtures__/nested.json'),
     );
-    const received = formatter(difftree);
+    const received = `${formatter(difftree)}\n`;
     const expected = await p.readFile(
       path.join(__dirname, '__fixtures__/nested.txt'),
       'utf-8',
