@@ -1,5 +1,7 @@
 import { describe, expect, test } from '@jest/globals';
+import path from 'path';
 import diff from '../src/diff.js';
+import parser from '../src/parsers/parsers.js';
 
 const { makeTree, compareTrees, compare } = diff;
 const finalTree = [
@@ -95,4 +97,14 @@ test('compare nested objects', () => {
   const newData = { key: { key: 'value-modified' } };
   const received = compare(oldData, newData);
   expect(received).toStrictEqual(finalTree);
+});
+
+test('compare complex objects', async () => {
+  const [oldData, newData, expected] = await parser.filesToObjects(
+    path.join(__dirname, '__fixtures__/h_nested_1.json'),
+    path.join(__dirname, '__fixtures__/h_nested_2.json'),
+    path.join(__dirname, '__fixtures__/nested.json'),
+  );
+  const received = compare(oldData, newData);
+  expect(received).toStrictEqual(expected);
 });

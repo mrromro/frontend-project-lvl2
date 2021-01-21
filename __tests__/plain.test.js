@@ -1,5 +1,8 @@
-import { test, describe } from '@jest/globals';
+import { test, describe, expect } from '@jest/globals';
+import path from 'path';
+import { promises as p } from 'fs';
 import formatter from '../src/formatters/plain.js';
+import parser from '../src/parsers/parsers.js';
 
 const record1 = [{ key: 'key1', value: 'value1' }];
 const record2 = [
@@ -69,5 +72,16 @@ describe('plain formatter test', () => {
       "Property 'key5' was updated. From 'value5' to 'value5-updated'",
     ].join('\n');
     expect(received).toBe(expected);
+  });
+  test('complex plain test', async () => {
+    const [difftree] = await parser.filesToObjects(
+      path.join(__dirname, '__fixtures__/nested.json'),
+    );
+    const received = formatter(difftree);
+    const expected = await p.readFile(
+      path.join(__dirname, '__fixtures__/nested.txt'),
+      'utf-8',
+    );
+    expect(received).toEqual(expected);
   });
 });

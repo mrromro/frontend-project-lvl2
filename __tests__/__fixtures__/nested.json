@@ -13,7 +13,7 @@
       },
       {
         "key": "setting2",
-        "value": "200",
+        "value": 200,
         "type": "removed"
       },
       {
@@ -95,7 +95,16 @@
     "value": [
       {
         "key": "abc",
-        "value": "12345"
+        "value": 12345
+      },
+      {
+        "key": "deep",
+        "value": [
+          {
+            "key": "id",
+            "value": 45
+          }
+        ]
       }
     ],
     "type": "removed"
@@ -103,10 +112,6 @@
   {
     "key": "group3",
     "value": [
-      {
-        "key": "fee",
-        "value": "100500"
-      },
       {
         "key": "deep",
         "value": [
@@ -120,6 +125,10 @@
             ]
           }
         ]
+      },
+      {
+        "key": "fee",
+        "value": 100500
       }
     ],
     "type": "added"

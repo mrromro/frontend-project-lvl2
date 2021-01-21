@@ -6,6 +6,7 @@ import parsers from '../src/parsers/parsers.js';
 import jsonFile from './__fixtures__/h_plain_1.json';
 
 let objects;
+const SUPPORTED_EXTENSIONS = ['.json', '.yaml'];
 
 const parseFiles = (dirAddr) => async (files) => {
   const promises = files.map(async (filename) => {
@@ -26,7 +27,9 @@ const parseFiles = (dirAddr) => async (files) => {
 beforeAll(async () => {
   const dirAddr = path.join(__dirname, '__fixtures__');
   const files = await fs.readdir(dirAddr);
-  objects = await parseFiles(dirAddr)(files);
+  objects = (
+    await parseFiles(dirAddr)(files)
+  ).filter(({ extension }) => SUPPORTED_EXTENSIONS.includes(extension));
 });
 
 test('chooseLoader() test', () => {
