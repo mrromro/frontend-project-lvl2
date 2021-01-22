@@ -199,7 +199,7 @@ const makeState = (typedNode, callback) => {
  */
 const makeTree = (obj) => {
   if (!isObjects(obj)) return obj;
-  const entries = Object.entries(obj).sort();
+  const entries = Object.entries(obj);
   const children = entries.map(([key, valueToProcess]) => {
     const value = makeTree(valueToProcess);
     return createNode({ key, value });
