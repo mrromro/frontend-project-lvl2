@@ -1,4 +1,7 @@
 import { describe, test } from '@jest/globals';
+import path from 'path';
+import { promises as p } from 'fs';
+import parser from '../src/parsers/parsers.js';
 import formatter from '../src/formatters/stylish.js';
 
 describe('stylish formatter tests', () => {
@@ -13,43 +16,19 @@ describe('stylish formatter tests', () => {
     const expected = ['{', '    key: value', '}'].join('\n');
     expect(received).toBe(expected);
   });
-  test('plain tree essential test', () => {
-    const tree = [
-      { key: 'key1', value: 'value1' },
-      { key: 'key2', value: 'value2', type: 'added' },
-      { key: 'key3', value: 'value3', type: 'removed' },
-    ];
-    const received = formatter(tree);
-    const expected = [
-      '{',
-      '    key1: value1',
-      '  + key2: value2',
-      '  - key3: value3',
-      '}',
-    ].join('\n');
-    expect(received).toBe(expected);
+
+  const runNamedTest = (name) => test(`complex ${name} test`, async () => {
+    const [difftree] = await parser.filesToObjects(
+      path.join(__dirname, `__fixtures__/${name}.json`),
+    );
+    const received = formatter(difftree);
+    const expected = await p.readFile(
+      path.join(__dirname, `__fixtures__/${name}_s.txt`),
+      'utf-8',
+    );
+    expect(received).toEqual(expected);
   });
-  test('nested tree essential test', () => {
-    const tree = [
-      {
-        key: 'key1',
-        value: [
-          { key: 'key2', value: 'value2', type: 'added' },
-          { key: 'key3', value: 'value3', type: 'removed' },
-        ],
-      },
-      { key: 'key4', value: 'value4' },
-    ];
-    const received = formatter(tree);
-    const expected = [
-      '{',
-      '    key1: {',
-      '      + key2: value2',
-      '      - key3: value3',
-      '    }',
-      '    key4: value4',
-      '}',
-    ].join('\n');
-    expect(received).toBe(expected);
-  });
+
+  runNamedTest('plain');
+  runNamedTest('nested');
 });

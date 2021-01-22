@@ -4,19 +4,7 @@ import diff from '../src/diff.js';
 import parser from '../src/parsers/parsers.js';
 
 const { makeTree, compareTrees, compare } = diff;
-const finalTree = [
-  {
-    key: 'key',
-    value: [
-      {
-        key: 'key',
-        type: 'updated',
-        value: 'value',
-        newValue: 'value-modified',
-      },
-    ],
-  },
-];
+
 describe('diff.makeTree tests', () => {
   test('empty call', () => {
     const received = makeTree();
@@ -70,41 +58,19 @@ describe('diff.compareTrees tests', () => {
     const received = compareTrees(tree, tree);
     expect(received).toStrictEqual(tree);
   });
-  test('different plain trees', () => {
-    const oldTree = makeTree({ key: 'value' });
-    const newTree = makeTree({ key: 'value-modified' });
-    const received = compareTrees(oldTree, newTree);
-    const expected = [
-      {
-        key: 'key',
-        type: 'updated',
-        value: 'value',
-        newValue: 'value-modified',
-      },
-    ];
+});
+
+describe('compare() named tests', () => {
+  const runNamedTest = (name) => test(`compare ${name} objects`, async () => {
+    const [oldData, newData, expected] = await parser.filesToObjects(
+      path.join(__dirname, `__fixtures__/h_${name}_1.json`),
+      path.join(__dirname, `__fixtures__/h_${name}_2.json`),
+      path.join(__dirname, `__fixtures__/${name}.json`),
+    );
+    const received = compare(oldData, newData);
     expect(received).toStrictEqual(expected);
   });
-  test('different nestes trees', () => {
-    const oldTree = makeTree({ key: { key: 'value' } });
-    const newTree = makeTree({ key: { key: 'value-modified' } });
-    const received = compareTrees(oldTree, newTree);
-    expect(received).toStrictEqual(finalTree);
-  });
-});
 
-test('compare nested objects', () => {
-  const oldData = { key: { key: 'value' } };
-  const newData = { key: { key: 'value-modified' } };
-  const received = compare(oldData, newData);
-  expect(received).toStrictEqual(finalTree);
-});
-
-test('compare complex objects', async () => {
-  const [oldData, newData, expected] = await parser.filesToObjects(
-    path.join(__dirname, '__fixtures__/h_nested_1.json'),
-    path.join(__dirname, '__fixtures__/h_nested_2.json'),
-    path.join(__dirname, '__fixtures__/nested.json'),
-  );
-  const received = compare(oldData, newData);
-  expect(received).toStrictEqual(expected);
+  runNamedTest('plain');
+  runNamedTest('nested');
 });

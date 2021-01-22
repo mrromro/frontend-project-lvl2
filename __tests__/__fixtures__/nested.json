@@ -113,6 +113,10 @@
     "key": "group3",
     "value": [
       {
+        "key": "fee",
+        "value": 100500
+      },
+      {
         "key": "deep",
         "value": [
           {
@@ -125,10 +129,6 @@
             ]
           }
         ]
-      },
-      {
-        "key": "fee",
-        "value": 100500
       }
     ],
     "type": "added"

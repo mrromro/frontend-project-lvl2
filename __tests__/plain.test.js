@@ -44,44 +44,19 @@ describe('plain formatter test', () => {
     ].join('\n');
     expect(received).toBe(expected);
   });
-  test('nested tree extended test', () => {
-    const tree = [
-      {
-        key: 'key1',
-        value: [
-          {
-            key: 'key3',
-            value: 'value3',
-            newValue: 'value33',
-            type: 'updated',
-          },
-          { key: 'key6', value: 'value6' },
-        ],
-      },
-      { key: 'key4', value: 'value4' },
-      {
-        key: 'key5',
-        value: 'value5',
-        newValue: 'value5-updated',
-        type: 'updated',
-      },
-    ];
-    const received = formatter(tree);
-    const expected = [
-      "Property 'key1.key3' was updated. From 'value3' to 'value33'",
-      "Property 'key5' was updated. From 'value5' to 'value5-updated'",
-    ].join('\n');
-    expect(received).toBe(expected);
-  });
-  test('complex plain test', async () => {
+
+  const runNamedTest = (name) => test(`complex ${name} test`, async () => {
     const [difftree] = await parser.filesToObjects(
-      path.join(__dirname, '__fixtures__/nested.json'),
+      path.join(__dirname, `__fixtures__/${name}.json`),
     );
-    const received = `${formatter(difftree)}\n`;
+    const received = formatter(difftree);
     const expected = await p.readFile(
-      path.join(__dirname, '__fixtures__/nested.txt'),
+      path.join(__dirname, `__fixtures__/${name}.txt`),
       'utf-8',
     );
     expect(received).toEqual(expected);
   });
+
+  runNamedTest('plain');
+  runNamedTest('nested');
 });
