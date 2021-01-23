@@ -5,7 +5,7 @@ import yaml from 'js-yaml';
 import parsers from '../src/parsers/parsers.js';
 import jsonFile from './__fixtures__/h_plain_1.json';
 
-let objects;
+const objects = [];
 const EXTENSIONS = ['.json', '.yaml', '.yml'];
 
 const parseFiles = (dirAddr) => async (files) => {
@@ -28,7 +28,7 @@ beforeAll(async () => {
   const dirAddr = path.join(__dirname, '__fixtures__');
   const files = await fs.readdir(dirAddr);
   const allFilesObj = await parseFiles(dirAddr)(files);
-  objects = allFilesObj.filter(({ ext }) => EXTENSIONS.includes(ext));
+  objects.push(...allFilesObj.filter(({ ext }) => EXTENSIONS.includes(ext)));
 });
 
 test('chooseLoader() test', () => {
@@ -64,6 +64,6 @@ test('filesToObjects test with all json files', async () => {
     const loader = parsers.chooseLoader(addr);
     return loader(data);
   });
-  const received = parsers.filesToObjects(...paths);
+  const received = parsers.filesToObjects(paths);
   expect(received).toStrictEqual(expected);
 });

@@ -9,7 +9,7 @@ import getFormatter from './formatters/index.js';
  * @param {string} format - name of formatter to format difftree
  */
 const genDiff = (filename1, filename2, format) => {
-  const [obj1, obj2] = parser.filesToObjects(filename1, filename2);
+  const [obj1, obj2] = parser.filesToObjects([filename1, filename2]);
   const diffTree = diff.compare(obj1, obj2);
   const formatter = getFormatter(format);
   const outcome = formatter(diffTree);

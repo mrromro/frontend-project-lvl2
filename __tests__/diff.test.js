@@ -62,12 +62,12 @@ describe('diff.compareTrees tests', () => {
 
 describe('compare() named tests', () => {
   const runNamedTest = (name) => {
-    test(`compare ${name} objects`, async () => {
-      const [oldData, newData, expected] = await parser.filesToObjects(
+    test(`compare ${name} objects`, () => {
+      const [oldData, newData, expected] = parser.filesToObjects([
         path.join(__dirname, `__fixtures__/h_${name}_1.json`),
         path.join(__dirname, `__fixtures__/h_${name}_2.json`),
         path.join(__dirname, `__fixtures__/${name}.json`),
-      );
+      ]);
       const received = compare(oldData, newData);
       expect(received).toStrictEqual(expected);
     });

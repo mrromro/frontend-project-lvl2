@@ -1,18 +1,18 @@
 import { test, describe, expect } from '@jest/globals';
 import path from 'path';
-import { promises as p } from 'fs';
+import fs from 'fs';
 import plain from '../src/formatters/plain.js';
 import stylish from '../src/formatters/stylish.js';
 import parser from '../src/parsers/parsers.js';
 
 const runNamedTest = (options) => {
   const { difftreeFilename, resultFilename, formatter } = options;
-  test(`complex ${formatter.name} test`, async () => {
-    const [difftree] = await parser.filesToObjects(
+  test(`complex ${formatter.name} test`, () => {
+    const [difftree] = parser.filesToObjects([
       path.join(__dirname, `__fixtures__/${difftreeFilename}.json`),
-    );
+    ]);
     const received = formatter(difftree);
-    const expected = await p.readFile(
+    const expected = fs.readFileSync(
       path.join(__dirname, `__fixtures__/${resultFilename}.txt`),
       'utf-8',
     );

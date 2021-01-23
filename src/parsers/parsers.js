@@ -30,14 +30,7 @@ function chooseLoader(filename) {
  */
 function fileToObject(file) {
   const addr = path.resolve(file);
-  let data;
-  try {
-    data = readFileSync(addr, 'utf-8');
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log('readfile error');
-    throw e;
-  }
+  const data = readFileSync(addr, 'utf-8');
   return chooseLoader(file)(data);
 }
 
@@ -48,7 +41,7 @@ function fileToObject(file) {
  * @param  {...string} files - names of files
  * @returns {Array[]} got from files
  */
-function filesToObjects(...files) {
+function filesToObjects(files) {
   return files.map(fileToObject);
 }
 
