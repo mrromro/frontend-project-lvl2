@@ -5,14 +5,9 @@ import plain from '../src/formatters/plain.js';
 import stylish from '../src/formatters/stylish.js';
 import parser from '../src/parsers/parsers.js';
 
-const makeNamedTest = (formatter) => (
-  {
-    difftreeFilename,
-    resultFilename,
-  },
-) => test(
-  `complex ${formatter.name} test`,
-  async () => {
+const runNamedTest = (options) => {
+  const { difftreeFilename, resultFilename, formatter } = options;
+  test(`complex ${formatter.name} test`, async () => {
     const [difftree] = await parser.filesToObjects(
       path.join(__dirname, `__fixtures__/${difftreeFilename}.json`),
     );
@@ -22,8 +17,8 @@ const makeNamedTest = (formatter) => (
       'utf-8',
     );
     expect(received).toEqual(expected);
-  },
-);
+  });
+};
 
 describe('plain formatter test', () => {
   test('empty tree test', () => {
@@ -36,19 +31,16 @@ describe('plain formatter test', () => {
     expect(received).toBe('');
   });
 
-  const runPlainNamedTest = makeNamedTest(plain);
-  runPlainNamedTest(
-    {
-      difftreeFilename: 'plain',
-      resultFilename: 'plain',
-    },
-  );
-  runPlainNamedTest(
-    {
-      difftreeFilename: 'nested',
-      resultFilename: 'nested',
-    },
-  );
+  runNamedTest({
+    formatter: plain,
+    difftreeFilename: 'plain',
+    resultFilename: 'plain',
+  });
+  runNamedTest({
+    formatter: plain,
+    difftreeFilename: 'nested',
+    resultFilename: 'nested',
+  });
 });
 
 describe('stylish formatter tests', () => {
@@ -64,17 +56,14 @@ describe('stylish formatter tests', () => {
     expect(received).toBe(expected);
   });
 
-  const runStylishNamedTest = makeNamedTest(stylish);
-  runStylishNamedTest(
-    {
-      difftreeFilename: 'plain',
-      resultFilename: 'plain_s',
-    },
-  );
-  runStylishNamedTest(
-    {
-      difftreeFilename: 'nested',
-      resultFilename: 'nested_s',
-    },
-  );
+  runNamedTest({
+    formatter: stylish,
+    difftreeFilename: 'plain',
+    resultFilename: 'plain_s',
+  });
+  runNamedTest({
+    formatter: stylish,
+    difftreeFilename: 'nested',
+    resultFilename: 'nested_s',
+  });
 });
