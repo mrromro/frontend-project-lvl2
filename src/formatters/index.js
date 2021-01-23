@@ -3,10 +3,10 @@ import plain from './plain.js';
 import json from './json.js';
 
 /**
- * Router of formatters to import
+ * Router of imported formatters
  * @object
  * @readonly
- * @this refers to the object itself
+ * @param {Function} default to fail-safety
  */
 const router = {
   stylish,
@@ -16,9 +16,9 @@ const router = {
 };
 
 /**
- * A module to import chosen formatter
+ * Import chosen or default formatter
  * @function
- * @param {string} format Name of formatter's alias in router
+ * @param {string} format name of formatter's alias in router
  * @returns {Function} formatter
  */
 export default (format) => router[format] || router.default;
