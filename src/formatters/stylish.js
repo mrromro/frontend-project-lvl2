@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * Make records from a template
  * @function
@@ -6,7 +8,10 @@
  * @param {string} value - a node value
  * @returns [string] - a record
  */
-const template = (pad) => (key, value) => `${pad} ${key}: ${value}`;
+const template = (pad) => (node) => {
+  const { key, value } = node;
+  return `${pad} ${key}: ${value}`;
+};
 
 /**
  * Contains template to corresponding types of records to make
@@ -29,20 +34,14 @@ const templates = {
  * @returns {string} record to display
  */
 const record = (node, indent) => {
-  const {
-    key,
-    value,
-    type,
-    //
-    newValue,
-  } = node;
+  const { type, newValue } = node;
   if (type === 'updated') {
     return [
-      indent + templates.removed(key, value),
-      indent + templates.added(key, newValue),
+      indent + templates.removed(node),
+      indent + templates.added({ ...node, value: newValue }),
     ].join('\n');
   }
-  return indent + templates[type](key, value);
+  return indent + templates[type](node);
 };
 
 /**
@@ -67,7 +66,7 @@ const makeRecord = (node, level = 0, pad = '  ') => {
  * @returns {string} result to output
  */
 const formatter = (tier, level = 0) => {
-  if (typeof tier !== 'object' || tier === null) return tier;
+  if (!_.isObjectLike(tier)) return tier;
   const outcome = tier.map((node) => {
     const { value, newValue } = node;
     const data = {
