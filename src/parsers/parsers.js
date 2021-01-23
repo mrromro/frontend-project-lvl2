@@ -30,7 +30,14 @@ function chooseLoader(filename) {
  */
 function fileToObject(file) {
   const addr = path.resolve(file);
-  const data = readFileSync(addr, 'utf-8');
+  let data;
+  try {
+    data = readFileSync(addr, 'utf-8');
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log('readfile error');
+    throw e;
+  }
   return chooseLoader(file)(data);
 }
 
