@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import parsers from '../src/parsers/parsers.js';
-import jsonFile from './__fixtures__/h_plain_1.json';
 
 const EXTENSIONS = ['.json', '.yaml', '.yml'];
 
@@ -23,6 +22,14 @@ const parseFiles = (dirAddr) => (files) => {
   return promises;
 };
 
+const getResults = (addr, loader) => {
+  const fullAddr = path.resolve(addr);
+  const data = fs.readFileSync(fullAddr, 'utf-8');
+  const received = parsers.fileToObject(addr);
+  const expected = loader(data);
+  return { received, expected };
+};
+
 test('chooseLoader() test', () => {
   const yamlFilename = 'file.yaml';
   const jsonFilename = 'file.json';
@@ -34,18 +41,18 @@ test('chooseLoader() test', () => {
 });
 
 describe('Test file parsers by one file', () => {
-  test('JSON filesToObject test with all json file', () => {
-    const expected = jsonFile;
-    const received = parsers.fileToObject(
-      path.join(__dirname, '__fixtures__/h_plain_1.json'),
+  test('JSON fileToObject test', () => {
+    const { received, expected } = getResults(
+      '__tests__/__fixtures__/h_plain_1.json',
+      JSON.parse,
     );
     expect(received).toStrictEqual(expected);
   });
-  test('YAML filesToObject test with all yaml file', () => {
-    const addr = path.join(__dirname, '__fixtures__/h_plain_1.yaml');
-    const data = fs.readFileSync(addr, 'utf-8');
-    const expected = yaml.load(data);
-    const received = parsers.fileToObject(addr);
+  test('YAML fileToObject test', () => {
+    const { received, expected } = getResults(
+      '__tests__/__fixtures__/h_plain_1.yaml',
+      yaml.load,
+    );
     expect(received).toStrictEqual(expected);
   });
 });
