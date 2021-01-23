@@ -1,3 +1,7 @@
+import stylish from './stylish.js';
+import plain from './plain.js';
+import json from './json.js';
+
 /**
  * Router of formatters to import
  * @object
@@ -12,13 +16,13 @@ const router = {
     return this.stylish;
   },
   get stylish() {
-    return './stylish.js';
+    return stylish;
   },
   get plain() {
-    return './plain.js';
+    return plain;
   },
   get json() {
-    return './json.js';
+    return json;
   },
 };
 
@@ -29,8 +33,4 @@ const router = {
  * @param {string} format Name of formatter's alias in router
  * @returns {Promise} with formatter
  */
-export default async (format) => {
-  const path = router[format] || router.default;
-  const { default: formatter } = await import(path);
-  return formatter;
-};
+export default (format) => router[format] || router.default;

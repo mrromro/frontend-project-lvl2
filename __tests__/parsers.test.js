@@ -60,12 +60,10 @@ describe('Test file parsers by one file', () => {
 
 test('filesToObjects test with all json files', async () => {
   const paths = objects.map(({ addr }) => addr);
-  const expected = Promise.all(
-    objects.map(async ({ data, addr }) => {
-      const loader = parsers.chooseLoader(addr);
-      return loader(data);
-    }),
-  );
+  const expected = objects.map(({ data, addr }) => {
+    const loader = parsers.chooseLoader(addr);
+    return loader(data);
+  });
   const received = parsers.filesToObjects(...paths);
   expect(received).toStrictEqual(expected);
 });
