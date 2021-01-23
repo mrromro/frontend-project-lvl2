@@ -15,6 +15,8 @@ function chooseLoader(filename) {
       return JSON.parse;
     case '.yaml':
       return yaml.load;
+    case '.yml':
+      return yaml.load;
     default:
       throw new Error(`unknown file extension ${extension}`);
   }

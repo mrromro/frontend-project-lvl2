@@ -6,7 +6,7 @@ import parsers from '../src/parsers/parsers.js';
 import jsonFile from './__fixtures__/h_plain_1.json';
 
 let objects;
-const EXTENSIONS = ['.json', '.yaml'];
+const EXTENSIONS = ['.json', '.yaml', '.yml'];
 
 const parseFiles = (dirAddr) => async (files) => {
   const promises = files.map(async (filename) => {
