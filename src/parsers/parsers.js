@@ -23,9 +23,8 @@ function chooseLoader(filename) {
 /**
  * Converts one file to {Object}
  * @function
- * @async
  * @param {string} file - name of file
- * @returns {Promise} with {Object} to be got from file
+ * @returns {Function} with {Object} got from file
  */
 function fileToObject(file) {
   const addr = path.resolve(file);
@@ -36,10 +35,9 @@ function fileToObject(file) {
 /**
  * Converts files to {Object}s
  * @function
- * @async
  * @exports named
  * @param  {...string} files - names of files
- * @returns {Promise} with {Array[]} to be got from files
+ * @returns {Array[]} got from files
  */
 function filesToObjects(...files) {
   return files.map(fileToObject);

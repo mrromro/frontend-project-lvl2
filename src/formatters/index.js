@@ -29,8 +29,7 @@ const router = {
 /**
  * A module to import chosen formatter
  * @function
- * @async
  * @param {string} format Name of formatter's alias in router
- * @returns {Promise} with formatter
+ * @returns {Function} formatter
  */
 export default (format) => router[format] || router.default;
