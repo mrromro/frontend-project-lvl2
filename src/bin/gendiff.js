@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import { program } from 'commander';
+import commander from 'commander';
 import gendiff from '../index.js';
 
+const { program } = commander;
 /**
  * Confuguration of CLI
  * An entry point is into the action method call.
