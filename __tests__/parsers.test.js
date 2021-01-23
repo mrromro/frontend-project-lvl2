@@ -1,19 +1,18 @@
 import { describe, test, expect } from '@jest/globals';
-import { promises as fs } from 'fs';
+import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 import parsers from '../src/parsers/parsers.js';
 import jsonFile from './__fixtures__/h_plain_1.json';
 
-const objects = [];
 const EXTENSIONS = ['.json', '.yaml', '.yml'];
 
-const parseFiles = (dirAddr) => async (files) => {
-  const promises = files.map(async (filename) => {
+const parseFiles = (dirAddr) => (files) => {
+  const promises = files.map((filename) => {
     const name = path.basename(filename);
     const extension = path.extname(filename);
     const addr = path.join(dirAddr, filename);
-    const data = await fs.readFile(addr, 'utf-8');
+    const data = fs.readFileSync(addr, 'utf-8');
     return {
       name,
       extension,
@@ -21,15 +20,8 @@ const parseFiles = (dirAddr) => async (files) => {
       data,
     };
   });
-  return Promise.all(promises);
+  return promises;
 };
-
-beforeAll(async () => {
-  const dirAddr = path.join(__dirname, '__fixtures__');
-  const files = await fs.readdir(dirAddr);
-  const allFilesObj = await parseFiles(dirAddr)(files);
-  objects.push(...allFilesObj.filter(({ ext }) => EXTENSIONS.includes(ext)));
-});
 
 test('chooseLoader() test', () => {
   const yamlFilename = 'file.yaml';
@@ -42,23 +34,27 @@ test('chooseLoader() test', () => {
 });
 
 describe('Test file parsers by one file', () => {
-  test('JSON filesToObject test with all json file', async () => {
+  test('JSON filesToObject test with all json file', () => {
     const expected = jsonFile;
-    const received = await parsers.fileToObject(
+    const received = parsers.fileToObject(
       path.join(__dirname, '__fixtures__/h_plain_1.json'),
     );
     expect(received).toStrictEqual(expected);
   });
-  test('YAML filesToObject test with all yaml file', async () => {
+  test('YAML filesToObject test with all yaml file', () => {
     const addr = path.join(__dirname, '__fixtures__/h_plain_1.yaml');
-    const data = await fs.readFile(addr, 'utf-8');
+    const data = fs.readFileSync(addr, 'utf-8');
     const expected = yaml.load(data);
-    const received = await parsers.fileToObject(addr);
+    const received = parsers.fileToObject(addr);
     expect(received).toStrictEqual(expected);
   });
 });
 
-test('filesToObjects test with all json files', async () => {
+test('filesToObjects test with all files', async () => {
+  const dirAddr = path.join(__dirname, '__fixtures__');
+  const files = fs.readdirSync(dirAddr);
+  const allFilesObj = parseFiles(dirAddr)(files);
+  const objects = allFilesObj.filter(({ ext }) => EXTENSIONS.includes(ext));
   const paths = objects.map(({ addr }) => addr);
   const expected = objects.map(({ data, addr }) => {
     const loader = parsers.chooseLoader(addr);

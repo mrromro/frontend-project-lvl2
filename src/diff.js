@@ -10,7 +10,7 @@ const createNode = (options = {}) => ({ ...options });
  * @param  {...any} objs - items to test
  * @returns {Boolean}
  */
-const isObjects = (...objs) => {
+const isObjects = (objs) => {
   const check = objs.map((obj) => typeof obj === 'object' && obj !== null);
   return check.every(Boolean);
 };
@@ -82,7 +82,7 @@ const nested = (nodes) => {
     oldNode: { value: oldValue },
     newNode: { value: newValue },
   } = nodes;
-  return isObjects(oldValue, newValue);
+  return isObjects([oldValue, newValue]);
 };
 
 /**
@@ -198,7 +198,7 @@ const makeState = (typedNode, callback) => {
  * @returns {Object[]} tree
  */
 const makeTree = (obj) => {
-  if (!isObjects(obj)) return obj;
+  if (!isObjects([obj])) return obj;
   const entries = Object.entries(obj);
   const children = entries.map(([key, valueToProcess]) => {
     const value = makeTree(valueToProcess);
