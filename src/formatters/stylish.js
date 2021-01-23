@@ -67,7 +67,7 @@ const makeRecord = (node, level = 0, pad = '  ') => {
  * @returns {string} result to output
  */
 const formatter = (tier, level = 0) => {
-  if (typeof tier !== 'object') return tier;
+  if (typeof tier !== 'object' || tier === null) return tier;
   const outcome = tier.map((node) => {
     const { value } = node;
     const data = { ...node, value: formatter(value, level + 2) };
