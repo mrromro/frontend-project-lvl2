@@ -19,7 +19,12 @@
       {
         "key": "setting3",
         "value": true,
-        "newValue": null,
+        "newValue": [
+          {
+            "key": "key",
+            "value": "value"
+          }
+        ],
         "type": "updated"
       },
       {
