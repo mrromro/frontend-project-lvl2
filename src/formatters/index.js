@@ -12,6 +12,7 @@ const router = {
   stylish,
   plain,
   json,
+  default: stylish,
 };
 
 /**
@@ -20,4 +21,4 @@ const router = {
  * @param {string} format Name of formatter's alias in router
  * @returns {Function} formatter
  */
-export default (format) => router[format] || router.stylish;
+export default (format) => router[format] || router.default;
