@@ -13,7 +13,7 @@ const createNode = (options = {}) => ({ ...options });
  * @returns {Boolean}
  */
 const isObjects = (objs) => {
-  const check = objs.map((obj) => typeof obj === 'object' && obj !== null);
+  const check = objs.map(_.isObjectLike);
   return check.every(Boolean);
 };
 
@@ -30,9 +30,9 @@ const getTreeKeys = (tree) => tree.map(({ key }) => key);
  * @returns {string[]} sorted unique keys
  */
 const getTreesKeys = (trees) => {
-  const allKeys = _.sortBy(trees.map(getTreeKeys).flat());
+  const allKeys = trees.map(getTreeKeys).flat();
   const uniqKeys = _.uniq(allKeys);
-  return uniqKeys;
+  return _.sortBy(uniqKeys);
 };
 
 /**
