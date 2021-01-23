@@ -27,7 +27,7 @@ const getTreeKeys = (tree) => tree.map(({ key }) => key);
  * @param  {...Object[]} trees
  * @returns {string[]} sorted unique keys
  */
-const getTreesKeys = (...trees) => {
+const getTreesKeys = (trees) => {
   const allKeys = trees.map(getTreeKeys).flat().sort();
   const uniqKeys = [...new Set(allKeys)];
   return uniqKeys;
@@ -216,7 +216,7 @@ const makeTree = (obj) => {
 const compareTrees = (oldTree, newTree) => {
   const findType = classify(oldTree, newTree);
 
-  const tier = getTreesKeys(oldTree, newTree).reduce((tree, key) => {
+  const tier = getTreesKeys([oldTree, newTree]).reduce((tree, key) => {
     const typedNode = findType(key);
     return [...tree, makeState(typedNode, compareTrees)];
   }, []);
