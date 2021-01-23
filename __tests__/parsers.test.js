@@ -41,19 +41,26 @@ test('chooseLoader() test', () => {
 });
 
 describe('Test file parsers by one file', () => {
-  test('JSON fileToObject test', () => {
-    const { received, expected } = getResults(
-      '__tests__/__fixtures__/h_plain_1.json',
-      JSON.parse,
-    );
-    expect(received).toStrictEqual(expected);
-  });
-  test('YAML fileToObject test', () => {
-    const { received, expected } = getResults(
-      '__tests__/__fixtures__/h_plain_1.yaml',
-      yaml.load,
-    );
-    expect(received).toStrictEqual(expected);
+  const cases = [
+    {
+      name: 'JSON',
+      addr: '__tests__/__fixtures__/h_plain_1.json',
+      loader: JSON.parse,
+    },
+    {
+      name: 'YAML',
+      addr: '__tests__/__fixtures__/h_plain_1.yaml',
+      loader: yaml.load,
+    },
+  ];
+  cases.forEach(({ name, addr, loader }) => {
+    test(`${name} fileToObject test`, () => {
+      const { received, expected } = getResults(
+        addr,
+        loader,
+      );
+      expect(received).toStrictEqual(expected);
+    });
   });
 });
 
