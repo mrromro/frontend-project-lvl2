@@ -9,7 +9,7 @@ const createNode = (options = {}) => ({ ...options });
 
 /**
  * Tests if items are type of Object
- * @param  {...any} objs - items to test
+ * @param  {Object[]} objs - items to test
  * @returns {Boolean}
  */
 const isObjects = (objs) => {
@@ -18,15 +18,15 @@ const isObjects = (objs) => {
 };
 
 /**
- * Extracts keys from objects in one tier of a tree
+ * Extracts keys from tree nodes in one tier of a tree
  * @param {Object[]} tree
  * @returns {string[]} keys
  */
 const getTreeKeys = (tree) => tree.map(({ key }) => key);
 
 /**
- * Extracts keys from objects in one tier of several trees
- * @param  {...Object[]} trees
+ * Extracts keys from nodes in one tier of several trees
+ * @param  {Object[]} trees
  * @returns {string[]} sorted unique keys
  */
 const getTreesKeys = (trees) => {
@@ -38,7 +38,7 @@ const getTreesKeys = (trees) => {
 /**
  * Search for a node with a given key
  * @param {Object[]} tier - tree tier
- * @param {*} keyToFind - name of the key to find
+ * @param {string} keyToFind - name of the key to find
  * @returns {Object | undefined} node
  */
 const getNode = (tier, keyToFind) => tier.find(({ key }) => key === keyToFind);
@@ -53,9 +53,9 @@ const added = ({ oldNode }) => oldNode === undefined;
 
 /**
  * Takes an object with nodes havin equal keys to test if it is
- * 'added' case
+ * 'deleted' case
  * @param {Object} param0 - reference to oldNode
- * @returns {Boolean} if 'added' case
+ * @returns {Boolean} if 'deleted' case
  */
 const deleted = ({ newNode }) => newNode === undefined;
 
@@ -63,7 +63,7 @@ const deleted = ({ newNode }) => newNode === undefined;
  * Takes an object with nodes havin equal keys to test if it is
  * 'equal' case
  * @param {Object} nodes - reference to nodes
- * @returns {Boolean} if 'deleted' case
+ * @returns {Boolean} if 'equal' case
  */
 const equal = (nodes) => {
   const {
@@ -74,7 +74,7 @@ const equal = (nodes) => {
 };
 
 /**
- * Takes an object with nodes havin equal keys to test if it is
+ * Takes an object with nodes having equal keys to test if it is
  * 'nested' case
  * @param {Object} nodes - reference to nodes
  * @returns {Boolean} if 'nested' case
@@ -119,7 +119,7 @@ const not = rule((arg) => !arg);
 const check = ([fn, conditions]) => fn(conditions);
 
 /**
- * Contains types and its requirements to meet
+ * Contains types and its requirements for nodes to meet
  * @object
  * @readonly
  */
@@ -160,7 +160,6 @@ const typeNode = (nodes, router = types) => {
 
 /**
  * Take trees to make a testing function.
- * Returned function takes key, finds appropriate nodes and get typed node.
  * @param {Object} oldTree - treed object with old data
  * @param {Object} newTree - treed object with new data
  * @returns {Function} converts key to typed node.
