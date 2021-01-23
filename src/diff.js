@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 /**
  * Creates an object by making shallow copy
  * @param {Object} options - object to be copied
@@ -28,8 +30,8 @@ const getTreeKeys = (tree) => tree.map(({ key }) => key);
  * @returns {string[]} sorted unique keys
  */
 const getTreesKeys = (trees) => {
-  const allKeys = trees.map(getTreeKeys).flat().sort();
-  const uniqKeys = [...new Set(allKeys)];
+  const allKeys = _.sortBy(trees.map(getTreeKeys).flat());
+  const uniqKeys = _.uniq(allKeys);
   return uniqKeys;
 };
 
