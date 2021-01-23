@@ -4,9 +4,8 @@ import _ from 'lodash';
  * Make records from a template
  * @function
  * @param {string} pad - pad to make indentation
- * @param {string} key - a node key
- * @param {string} value - a node value
- * @returns [string] - a record
+ * @param {Object} node - tree node
+ * @returns {string} - a record
  */
 const template = (pad) => (node) => {
   const { key, value } = node;
