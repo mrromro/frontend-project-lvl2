@@ -13,9 +13,9 @@ program
   .description('Compares two configuration files and shows a difference.')
   .option('-f, --format [type]', 'output format', 'stylish')
   .arguments('<filepath1> <filepath2>')
-  .action(async (filepath1, filepath2) => {
+  .action((filepath1, filepath2) => {
     // eslint-disable-next-line no-console
-    console.log(await gendiff(filepath1, filepath2, program.format));
+    console.log(gendiff(filepath1, filepath2, program.format));
     process.exit(0);
   });
 
