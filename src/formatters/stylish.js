@@ -67,10 +67,14 @@ const makeRecord = (node, level = 0, pad = '  ') => {
  * @returns {string} result to output
  */
 const formatter = (tier, level = 0) => {
-  if (typeof tier !== 'object' || tier === null) return tier;
+  if (typeof tier !== 'object') return tier;
   const outcome = tier.map((node) => {
-    const { value } = node;
-    const data = { ...node, value: formatter(value, level + 2) };
+    const { value, newValue } = node;
+    const data = {
+      ...node,
+      value: formatter(value, level + 2),
+      newValue: formatter(newValue, level + 2),
+    };
     return makeRecord(data, level + 1);
   });
   return templates.object(outcome.join('\n'), level);
